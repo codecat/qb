@@ -45,6 +45,11 @@ func main() {
 		return
 	}
 
+	if len(sourceFiles) == 0 {
+		log.Warn("No source files found!")
+		return
+	}
+
 	// Make a temporary folder for .obj files
 	pathTmp := filepath.Join(os.TempDir(), fmt.Sprintf("qb_%d", time.Now().Unix()))
 	os.Mkdir(pathTmp, 0777)
@@ -94,7 +99,8 @@ func main() {
 
 	name := viper.GetString("name")
 	if name == "" {
-		//TODO: Find output name from parent directory name
+		currentDir, _ := filepath.Abs(".")
+		name = filepath.Base(currentDir)
 	}
 
 	outPath, err := compiler.Link(pathTmp, name, linkType)

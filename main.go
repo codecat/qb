@@ -168,7 +168,7 @@ func main() {
 	timeLinking := time.Since(timeStart)
 
 	// Report succcess
-	log.Info("💚 %s", outPath)
+	log.Info("👏 %s", outPath)
 	log.Info("⏳ compile %v, link %v", timeCompilation, timeLinking)
 }
 
@@ -176,6 +176,6 @@ func main() {
 TODO:
 - Make sure all builds are completely statically linked
 - Keep a state of already compiled files so subsequent builds are faster
-- A nice progress bar of compilation/link status
 - Pkgconfig support
+- "qb run"
 */

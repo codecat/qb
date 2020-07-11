@@ -8,9 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/spf13/pflag"
-
 	"github.com/codecat/go-libs/log"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
@@ -32,10 +31,13 @@ func compileWorker(num int) {
 			break
 		}
 
+		fileForward := strings.Replace(task.path, "\\", "/", -1)
+		log.Info("%s", fileForward)
+
 		err := compiler.Compile(task.path, task.outputDir)
 		if err != nil {
-			fileForward := strings.Replace(task.path, "\\", "/", -1)
-			log.Error("%s: %s", fileForward, err.Error())
+			log.Error("Failed to compile %s!", fileForward)
+			log.Error("%s", err.Error())
 			compilerErrors++
 		}
 	}
@@ -44,8 +46,8 @@ func compileWorker(num int) {
 }
 
 func main() {
-	// Open logging
-	log.Open(log.CatTrace, log.CatFatal)
+	// Configure logging
+	log.CurrentConfig.Category = false
 
 	// Prepare possible command line flags
 	pflag.String("name", "", "binary output name without the extension")
@@ -98,6 +100,9 @@ func main() {
 		go compileWorker(i)
 	}
 
+	// Begin compilation timer
+	timeStart := time.Now()
+
 	// Compile all the source files
 	for _, file := range sourceFiles {
 		dir := filepath.Dir(file)
@@ -109,9 +114,6 @@ func main() {
 			compilerErrors++
 			continue
 		}
-
-		fileForward := strings.Replace(file, "\\", "/", -1)
-		log.Info("%s", fileForward)
 
 		workerChan <- workerTask{
 			path:      file,
@@ -127,9 +129,12 @@ func main() {
 		<-workerFinished
 	}
 
+	// Measure the time that compilation took
+	timeCompilation := time.Since(timeStart)
+
 	// Stop if there were any compiler errors
 	if compilerErrors > 0 {
-		log.Fatal("Compiled failed: %d errors", compilerErrors)
+		log.Fatal("😢 Compilation failed!")
 		return
 	}
 
@@ -150,14 +155,21 @@ func main() {
 		name = filepath.Base(currentDir)
 	}
 
+	// Begin link timer
+	timeStart = time.Now()
+
 	outPath, err := compiler.Link(pathTmp, name, linkType)
 	if err != nil {
-		log.Fatal("Link failed: %s", err.Error())
+		log.Fatal("👎 Link failed: %s", err.Error())
 		return
 	}
 
+	// Measure the time that linking took
+	timeLinking := time.Since(timeStart)
+
 	// Report succcess
-	log.Info("Build success: %s", outPath)
+	log.Info("💚 %s", outPath)
+	log.Info("⏳ compile %v, link %v", timeCompilation, timeLinking)
 }
 
 /*
@@ -165,4 +177,5 @@ TODO:
 - Make sure all builds are completely statically linked
 - Keep a state of already compiled files so subsequent builds are faster
 - A nice progress bar of compilation/link status
+- Pkgconfig support
 */

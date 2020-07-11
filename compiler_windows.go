@@ -97,7 +97,9 @@ func (ci windowsCompiler) Compile(path, objDir string) error {
 	outputBytes, err := cmd.CombinedOutput()
 	if err != nil {
 		output := strings.Trim(string(outputBytes), "\r\n")
-		return errors.New(output)
+		// Skip the first line from the output as it will always be the filename
+		lines := strings.SplitN(output, "\n", 2)
+		return errors.New(lines[1])
 	}
 	return nil
 }

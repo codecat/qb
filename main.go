@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -12,6 +13,35 @@ import (
 	"github.com/codecat/go-libs/log"
 	"github.com/spf13/viper"
 )
+
+type workerTask struct {
+	path      string
+	outputDir string
+}
+
+var compiler Compiler
+var compilerErrors int
+
+var workerChan chan workerTask
+var workerFinished chan int
+
+func compileWorker(num int) {
+	for {
+		task, ok := <-workerChan
+		if !ok {
+			break
+		}
+
+		err := compiler.Compile(task.path, task.outputDir)
+		if err != nil {
+			fileForward := strings.Replace(task.path, "\\", "/", -1)
+			log.Error("%s: %s", fileForward, err.Error())
+			compilerErrors++
+		}
+	}
+
+	workerFinished <- num
+}
 
 func main() {
 	// Open logging
@@ -32,7 +62,7 @@ func main() {
 	}
 
 	// Find the compiler
-	compiler, err := getCompiler()
+	compiler, err = getCompiler()
 	if err != nil {
 		log.Fatal("Unable to get compiler: %s", err.Error())
 		return
@@ -55,34 +85,51 @@ func main() {
 	os.Mkdir(pathTmp, 0777)
 	defer os.RemoveAll(pathTmp)
 
+	// Prepare worker channel
+	workerChan = make(chan workerTask)
+	workerFinished = make(chan int)
+
+	// Start compiler worker routines
+	numWorkers := runtime.NumCPU()
+	if len(sourceFiles) < numWorkers {
+		numWorkers = len(sourceFiles)
+	}
+	for i := 0; i < numWorkers; i++ {
+		go compileWorker(i)
+	}
+
 	// Compile all the source files
-	compileErrors := 0
-
 	for _, file := range sourceFiles {
-		fileForward := strings.Replace(file, "\\", "/", -1)
-		log.Trace("%s", fileForward)
-
 		dir := filepath.Dir(file)
 		outputDir := filepath.Join(pathTmp, dir)
 
 		err := os.MkdirAll(outputDir, 0777)
 		if err != nil {
-			log.Error("Unable to create output directory: %s", err.Error())
-			compileErrors++
+			log.Error("Unable to create output directory %s: %s", outputDir, err.Error())
+			compilerErrors++
 			continue
 		}
 
-		err = compiler.Compile(file, outputDir)
-		if err != nil {
-			log.Error("%s: %s", fileForward, err.Error())
-			compileErrors++
-			continue
+		fileForward := strings.Replace(file, "\\", "/", -1)
+		log.Info("%s", fileForward)
+
+		workerChan <- workerTask{
+			path:      file,
+			outputDir: outputDir,
 		}
 	}
 
+	// Close the worker channel
+	close(workerChan)
+
+	// Wait for all workers to finish compiling
+	for i := 0; i < numWorkers; i++ {
+		<-workerFinished
+	}
+
 	// Stop if there were any compiler errors
-	if compileErrors > 0 {
-		log.Fatal("Compiled failed: %d errors", compileErrors)
+	if compilerErrors > 0 {
+		log.Fatal("Compiled failed: %d errors", compilerErrors)
 		return
 	}
 
@@ -117,6 +164,5 @@ func main() {
 TODO:
 - Make sure all builds are completely statically linked
 - Keep a state of already compiled files so subsequent builds are faster
-- Multiple tasks so we can compile multiple files at once
 - A nice progress bar of compilation/link status
 */

@@ -37,7 +37,7 @@ func main() {
 
 	for _, file := range sourceFiles {
 		fileForward := strings.Replace(file, "\\", "/", -1)
-		log.Info("%s", fileForward)
+		log.Trace("%s", fileForward)
 
 		dir := filepath.Dir(file)
 		outputDir := filepath.Join(pathTmp, dir)
@@ -69,6 +69,9 @@ func main() {
 		log.Fatal("Link failed: %s", err.Error())
 		return
 	}
+
+	// Report succcess
+	log.Info("Build success!")
 }
 
 /*
@@ -77,5 +80,5 @@ TODO:
 - Make sure all builds are completely statically linked
 - Keep a state of already compiled files so we don't have to keep track of them
 - Multiple tasks so we can compile multiple files at once
-- A nice in-terminal progress bar of compilation/link status
+- A nice progress bar of compilation/link status
 */

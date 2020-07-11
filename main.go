@@ -7,11 +7,29 @@ import (
 	"strings"
 	"time"
 
+	"github.com/spf13/pflag"
+
 	"github.com/codecat/go-libs/log"
+	"github.com/spf13/viper"
 )
 
 func main() {
+	// Open logging
 	log.Open(log.CatTrace, log.CatFatal)
+
+	// Prepare possible command line flags
+	pflag.String("name", "", "binary output name without the extension")
+	pflag.String("type", "exe", "binary output type, either \"exe\", \"dll\", or \"lib\"")
+	pflag.Parse()
+
+	// Load a qb.toml file, if it exists
+	viper.AddConfigPath(".")
+	viper.SetConfigName("qb")
+	viper.BindPFlags(pflag.CommandLine)
+	err := viper.ReadInConfig()
+	if err == nil {
+		log.Info("Using build configuration file %s", filepath.Base(viper.ConfigFileUsed()))
+	}
 
 	// Find the compiler
 	compiler, err := getCompiler()
@@ -64,21 +82,35 @@ func main() {
 	}
 
 	// Link
-	err = compiler.Link(pathTmp, "./Build.exe")
+	linkType := LinkExe
+	switch viper.GetString("type") {
+	case "exe":
+		linkType = LinkExe
+	case "dll":
+		linkType = LinkDll
+	case "lib":
+		linkType = LinkLib
+	}
+
+	name := viper.GetString("name")
+	if name == "" {
+		//TODO: Find output name from parent directory name
+	}
+
+	outPath, err := compiler.Link(pathTmp, name, linkType)
 	if err != nil {
 		log.Fatal("Link failed: %s", err.Error())
 		return
 	}
 
 	// Report succcess
-	log.Info("Build success!")
+	log.Info("Build success: %s", outPath)
 }
 
 /*
 TODO:
-- Find output filename (.exe or .dll) from parent directory name
 - Make sure all builds are completely statically linked
-- Keep a state of already compiled files so we don't have to keep track of them
+- Keep a state of already compiled files so subsequent builds are faster
 - Multiple tasks so we can compile multiple files at once
 - A nice progress bar of compilation/link status
 */

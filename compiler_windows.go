@@ -43,6 +43,10 @@ func (ci windowsCompiler) linker() string {
 	return filepath.Join(ci.binDir(), "link.exe")
 }
 
+func (ci windowsCompiler) libber() string {
+	return filepath.Join(ci.binDir(), "lib.exe")
+}
+
 func (ci windowsCompiler) includeDirs() []string {
 	ret := make([]string, 0)
 
@@ -98,13 +102,29 @@ func (ci windowsCompiler) Compile(path, objDir string) error {
 	return nil
 }
 
-func (ci windowsCompiler) Link(objDir, outPath string) error {
+func (ci windowsCompiler) Link(objDir, outPath string, outType LinkType) (string, error) {
 	// link.exe args: https://docs.microsoft.com/en-us/cpp/build/reference/linker-options?view=vs-2019
+
+	exeName := ci.linker()
 
 	args := make([]string, 0)
 	args = append(args, "/nologo")
-	//args = append(args, "/dll")
 	args = append(args, "/machine:x64")
+
+	switch outType {
+	case LinkExe:
+		outPath += ".exe"
+
+	case LinkDll:
+		outPath += ".dll"
+		args = append(args, "/dll")
+
+	case LinkLib:
+		exeName = ci.libber()
+		outPath += ".lib"
+		args = append(args, "/lib")
+	}
+
 	args = append(args, fmt.Sprintf("/out:%s", outPath))
 
 	filepath.Walk(objDir, func(path string, info os.FileInfo, err error) error {
@@ -118,7 +138,7 @@ func (ci windowsCompiler) Link(objDir, outPath string) error {
 		return nil
 	})
 
-	cmd := exec.Command(ci.linker(), args...)
+	cmd := exec.Command(exeName, args...)
 	cmd.Env = append(os.Environ(),
 		"LIB="+strings.Join(ci.linkDirs(), ";"),
 	)
@@ -126,7 +146,7 @@ func (ci windowsCompiler) Link(objDir, outPath string) error {
 	outputBytes, err := cmd.CombinedOutput()
 	if err != nil {
 		output := strings.Trim(string(outputBytes), "\r\n")
-		return errors.New(output)
+		return "", errors.New(output)
 	}
-	return nil
+	return outPath, nil
 }

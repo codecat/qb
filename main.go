@@ -176,6 +176,7 @@ func main() {
 TODO:
 - Make sure all builds are completely statically linked
 - Keep a state of already compiled files so subsequent builds are faster
+- A way to add include dirs and link to libraries
 - Pkgconfig support
 - "qb run"
 */

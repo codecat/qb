@@ -1,5 +1,9 @@
 # Quickbuild (qb)
-`qb` is a zero-configuration build system to very quickly build C/C++ projects.
+`qb` is a zero-configuration build system to very quickly build C/C++ projects on Linux and Windows.
+
+<p align="center">
+  <img src="https://4o4.nl/qb.gif" />
+</p>
 
 ## Example
 Let's say you have a folder containing some source files:

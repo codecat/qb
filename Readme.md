@@ -26,9 +26,10 @@ You run `qb` in this directory:
 
 ```
 ~/qbtest $ qb
-[16:48:43.917] [TRACE] main.cpp
-[16:48:44.139] [TRACE] test.cpp
-[16:48:44.279] [ INFO] Build success: qbtest
+22:30:40.363 | main.cpp
+22:30:40.364 | test.cpp
+22:30:40.456 | 👏 qbtest
+22:30:40.456 | ⏳ compile 53.9738ms, link 39.1138ms
 ```
 
 And you run the resulting binary:

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -170,6 +171,21 @@ func main() {
 	// Report succcess
 	log.Info("👏 %s", outPath)
 	log.Info("⏳ compile %v, link %v", timeCompilation, timeLinking)
+
+	// Find any non-flag commands
+	for _, arg := range os.Args {
+		if strings.HasPrefix(arg, "--") {
+			continue
+		}
+
+		if arg == "run" {
+			cmd := exec.Command(outPath)
+			cmd.Stdin = os.Stdin
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			cmd.Run()
+		}
+	}
 }
 
 /*
@@ -178,5 +194,4 @@ TODO:
 - Keep a state of already compiled files so subsequent builds are faster
 - A way to add include dirs and link to libraries
 - Pkgconfig support
-- "qb run"
 */

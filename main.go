@@ -46,6 +46,20 @@ func compileWorker(num int) {
 	workerFinished <- num
 }
 
+func hasCommand(cmd string) bool {
+	for _, arg := range os.Args {
+		if strings.HasPrefix(arg, "--") {
+			continue
+		}
+
+		if arg == cmd {
+			return true
+		}
+	}
+
+	return false
+}
+
 func main() {
 	// Configure logging
 	log.CurrentConfig.Category = false
@@ -184,17 +198,12 @@ func main() {
 	log.Info("⏳ compile %v, link %v", timeCompilation, timeLinking)
 
 	// Find any non-flag commands
-	for _, arg := range os.Args {
-		if strings.HasPrefix(arg, "--") {
-			continue
-		}
-
-		if arg == "run" {
-			cmd := exec.Command(outPath)
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			cmd.Run()
-		}
+	if hasCommand("run") {
+		absOutPath, _ := filepath.Abs(outPath)
+		cmd := exec.Command(absOutPath)
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		cmd.Run()
 	}
 }

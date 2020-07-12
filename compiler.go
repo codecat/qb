@@ -18,6 +18,7 @@ const (
 type Compiler interface {
 	Compile(path, objDir string, options *CompilerOptions) error
 	Link(objDir, outPath string, outType LinkType, options *CompilerOptions) (string, error)
+	Clean(name string)
 }
 
 // CompilerOptions contains options used for compiling and linking.

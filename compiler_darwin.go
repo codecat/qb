@@ -105,3 +105,10 @@ func (ci darwinCompiler) Link(objDir, outPath string, outType LinkType, options 
 
 	return outPath, nil
 }
+
+func (ci darwinCompiler) Clean(name string) {
+	os.Remove(name)
+	os.Remove(name + ".dylib")
+	os.Remove(name + ".a")
+	os.RemoveAll(name + ".dSYM")
+}

@@ -95,6 +95,20 @@ func main() {
 		return
 	}
 
+	// Find the name of the project
+	name := viper.GetString("name")
+	if name == "" {
+		// If there's no name set, use the name of the current directory
+		currentDir, _ := filepath.Abs(".")
+		name = filepath.Base(currentDir)
+	}
+
+	// If we have to clean, do that and exit
+	if hasCommand("clean") {
+		compiler.Clean(name)
+		return
+	}
+
 	// Find all the source files to compile
 	sourceFiles, err := getSourceFiles()
 	if err != nil {
@@ -173,12 +187,6 @@ func main() {
 		linkType = LinkDll
 	case "lib":
 		linkType = LinkLib
-	}
-
-	name := viper.GetString("name")
-	if name == "" {
-		currentDir, _ := filepath.Abs(".")
-		name = filepath.Base(currentDir)
 	}
 
 	// Begin link timer

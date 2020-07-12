@@ -1,5 +1,5 @@
 # Quickbuild (qb)
-`qb` is a zero-configuration build system to very quickly build C/C++ projects on Linux and Windows.
+`qb` is a zero-configuration build system to very quickly build C/C++ projects on Linux, Windows, and MacOS.
 
 <p align="center">
   <img src="https://4o4.nl/qb.gif" />
@@ -49,7 +49,7 @@ If you **do** want a little bit more control over what happens, you can either u
 
 ### Command line options
 ```
-qb [--name name] [--type (exe|dll|lib)] [--static] [--debug]
+qb [--name name] [--type (exe|dll|lib)] [--static] [--debug] [--verbose]
 ```
 
 #### `--name`
@@ -68,7 +68,7 @@ For example, to create a dynamic library, you would pass `--type dll`.
 Links statically in order to create a standalone binary that does not perform any loading of dynamic libraries.
 
 #### `--debug`
-Produces debug information for the resulting binary. On Windows that means a `.pdb` file, and on Linux that means embedding debug information into the binary itself so that it can be used with gdb.
+Produces debug information for the resulting binary. On Windows that means a `.pdb` file, on Linux that means embedding debug information into the binary itself so that it can be used with gdb, and on Mac that means a `.dSYM` bundle.
 
 #### `--verbose`
 Makes it so that all compiler and linker commands will be printed to the log. Useful for debugging qb itself.
@@ -81,4 +81,11 @@ The configuration file works the same as the command line options, except they a
 ```toml
 name = "libfoo"
 type = "dll"
+```
+
+To make a statically linked debug binary, you can put this in the configuration file:
+
+```toml
+static = true
+debug = true
 ```

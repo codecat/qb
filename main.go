@@ -5,7 +5,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"time"
 
@@ -13,38 +12,6 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
-
-type workerTask struct {
-	path      string
-	outputDir string
-	options   *CompilerOptions
-}
-
-var compiler Compiler
-var compilerErrors int
-
-var workerChan chan workerTask
-var workerFinished chan int
-
-func compileWorker(num int) {
-	for {
-		task, ok := <-workerChan
-		if !ok {
-			break
-		}
-
-		fileForward := strings.Replace(task.path, "\\", "/", -1)
-		log.Info("%s", fileForward)
-
-		err := compiler.Compile(task.path, task.outputDir, task.options)
-		if err != nil {
-			log.Error("Failed to compile %s!\n%s", fileForward, err.Error())
-			compilerErrors++
-		}
-	}
-
-	workerFinished <- num
-}
 
 func hasCommand(cmd string) bool {
 	for _, arg := range os.Args {
@@ -81,125 +48,70 @@ func main() {
 		log.Info("Using build configuration file %s", filepath.Base(viper.ConfigFileUsed()))
 	}
 
-	// Load any compiler options
-	options := CompilerOptions{
-		Static:  viper.GetBool("static"),
-		Debug:   viper.GetBool("debug"),
-		Verbose: viper.GetBool("verbose"),
-	}
-
-	// Find the compiler
-	compiler, err = getCompiler()
+	// Prepare qb's internal context
+	ctx, err := NewContext()
 	if err != nil {
-		log.Fatal("Unable to get compiler: %s", err.Error())
+		log.Fatal("Unable to initialize context: %s", err.Error())
 		return
 	}
 
 	// Find the name of the project
-	name := viper.GetString("name")
-	if name == "" {
+	ctx.Name = viper.GetString("name")
+	if ctx.Name == "" {
 		// If there's no name set, use the name of the current directory
 		currentDir, _ := filepath.Abs(".")
-		name = filepath.Base(currentDir)
+		ctx.Name = filepath.Base(currentDir)
 	}
 
-	// If we have to clean, do that and exit
+	// If we only have to clean, do that and exit
 	if hasCommand("clean") {
-		compiler.Clean(name)
+		ctx.Compiler.Clean(ctx.Name)
 		return
 	}
 
+	// Load any compiler options
+	ctx.CompilerOptions.Static = viper.GetBool("static")
+	ctx.CompilerOptions.Debug = viper.GetBool("debug")
+	ctx.CompilerOptions.Verbose = viper.GetBool("verbose")
+
 	// Find all the source files to compile
-	sourceFiles, err := getSourceFiles()
+	ctx.SourceFiles, err = getSourceFiles()
 	if err != nil {
 		log.Fatal("Unable to read directory: %s", err.Error())
 		return
 	}
 
-	if len(sourceFiles) == 0 {
+	if len(ctx.SourceFiles) == 0 {
 		log.Warn("No source files found!")
 		return
 	}
 
 	// Make a temporary folder for .obj files
-	pathTmp := filepath.Join(os.TempDir(), fmt.Sprintf("qb_%d", time.Now().Unix()))
-	os.Mkdir(pathTmp, 0777)
-	defer os.RemoveAll(pathTmp)
+	ctx.ObjectPath = filepath.Join(os.TempDir(), fmt.Sprintf("qb_%d", time.Now().Unix()))
+	os.Mkdir(ctx.ObjectPath, 0777)
+	defer os.RemoveAll(ctx.ObjectPath)
 
-	// Prepare worker channel
-	workerChan = make(chan workerTask)
-	workerFinished = make(chan int)
-
-	// Start compiler worker routines
-	numWorkers := runtime.NumCPU()
-	if len(sourceFiles) < numWorkers {
-		numWorkers = len(sourceFiles)
-	}
-	for i := 0; i < numWorkers; i++ {
-		go compileWorker(i)
-	}
-
-	// Begin compilation timer
+	// Perform the compilation
 	timeStart := time.Now()
-
-	// Compile all the source files
-	for _, file := range sourceFiles {
-		dir := filepath.Dir(file)
-		outputDir := filepath.Join(pathTmp, dir)
-
-		err := os.MkdirAll(outputDir, 0777)
-		if err != nil {
-			log.Error("Unable to create output directory %s: %s", outputDir, err.Error())
-			compilerErrors++
-			continue
-		}
-
-		workerChan <- workerTask{
-			path:      file,
-			outputDir: outputDir,
-			options:   &options,
-		}
-	}
-
-	// Close the worker channel
-	close(workerChan)
-
-	// Wait for all workers to finish compiling
-	for i := 0; i < numWorkers; i++ {
-		<-workerFinished
-	}
-
-	// Measure the time that compilation took
+	performCompilation(ctx)
 	timeCompilation := time.Since(timeStart)
 
 	// Stop if there were any compiler errors
-	if compilerErrors > 0 {
+	if ctx.CompilerErrors > 0 {
 		log.Fatal("😢 Compilation failed!")
 		return
 	}
 
-	// Link
-	linkType := LinkExe
-	switch viper.GetString("type") {
-	case "exe":
-		linkType = LinkExe
-	case "dll":
-		linkType = LinkDll
-	case "lib":
-		linkType = LinkLib
-	}
-
-	// Begin link timer
+	// Perform the linking
 	timeStart = time.Now()
+	outPath, err := performLinking(ctx)
+	timeLinking := time.Since(timeStart)
 
-	outPath, err := compiler.Link(pathTmp, name, linkType, &options)
+	// Stop if linking failed
 	if err != nil {
 		log.Fatal("👎 Link failed: %s", err.Error())
 		return
 	}
-
-	// Measure the time that linking took
-	timeLinking := time.Since(timeStart)
 
 	// Report succcess
 	log.Info("👏 %s", outPath)

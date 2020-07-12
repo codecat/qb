@@ -42,6 +42,15 @@ And you run the resulting binary:
 Hello, world
 ```
 
+## Commands
+You can pass a number of commands to `qb`.
+
+### `qb run`
+Runs the binary after building it.
+
+### `qb clean`
+Cleans all output files that qb could generate.
+
 ## Optional configuration
 Since `qb` is meant to be a zero configuration tool, you don't have to do any configuration to get going quickly. It will do its best to find appropriate defaults for your setup, you just run `qb` and it builds.
 

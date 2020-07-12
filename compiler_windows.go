@@ -9,6 +9,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/codecat/go-libs/log"
 )
 
 type windowsCompiler struct {
@@ -109,6 +111,10 @@ func (ci windowsCompiler) Compile(path, objDir string, options *CompilerOptions)
 		"INCLUDE="+strings.Join(ci.includeDirs(), ";"),
 	)
 
+	if options.Verbose {
+		log.Trace("%s", strings.Join(cmd.Args, " "))
+	}
+
 	outputBytes, err := cmd.CombinedOutput()
 	if err != nil {
 		output := strings.Trim(string(outputBytes), "\r\n")
@@ -163,6 +169,10 @@ func (ci windowsCompiler) Link(objDir, outPath string, outType LinkType, options
 	cmd.Env = append(os.Environ(),
 		"LIB="+strings.Join(ci.linkDirs(), ";"),
 	)
+
+	if options.Verbose {
+		log.Trace("%s", strings.Join(cmd.Args, " "))
+	}
 
 	outputBytes, err := cmd.CombinedOutput()
 	if err != nil {

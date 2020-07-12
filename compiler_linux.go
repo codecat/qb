@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/codecat/go-libs/log"
 )
 
 type linuxCompiler struct {
@@ -22,6 +24,11 @@ func (ci linuxCompiler) Compile(path, objDir string, options *CompilerOptions) e
 	args = append(args, path)
 
 	cmd := exec.Command("gcc", args...)
+
+	if options.Verbose {
+		log.Trace("%s", strings.Join(cmd.Args, " "))
+	}
+
 	outputBytes, err := cmd.CombinedOutput()
 	if err != nil {
 		output := strings.Trim(string(outputBytes), "\r\n")
@@ -79,6 +86,10 @@ func (ci linuxCompiler) Link(objDir, outPath string, outType LinkType, options *
 	})
 
 	cmd := exec.Command(exeName, args...)
+
+	if options.Verbose {
+		log.Trace("%s", strings.Join(cmd.Args, " "))
+	}
 
 	outputBytes, err := cmd.CombinedOutput()
 	if err != nil {

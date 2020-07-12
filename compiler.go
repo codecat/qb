@@ -27,4 +27,7 @@ type CompilerOptions struct {
 
 	// Debug configurations will add debug symbols. This will create a pdb file on Windows, and embed debugging information on Linux.
 	Debug bool
+
+	// Verbose compiling means we'll print the actual compiler and linker commands being executed.
+	Verbose bool
 }

@@ -70,6 +70,9 @@ Links statically in order to create a standalone binary that does not perform an
 #### `--debug`
 Produces debug information for the resulting binary. On Windows that means a `.pdb` file, and on Linux that means embedding debug information into the binary itself so that it can be used with gdb.
 
+#### `--verbose`
+Makes it so that all compiler and linker commands will be printed to the log. Useful for debugging qb itself.
+
 ### Configuration file
 It's possible to create a `qb.toml` file (in the folder you're running `qb`) to specify your configuration options as well. This is handy if you build a lot but don't want to pass the command line options every time.
 

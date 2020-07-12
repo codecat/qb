@@ -55,6 +55,7 @@ func main() {
 	pflag.String("type", "exe", "binary output type, either \"exe\", \"dll\", or \"lib\"")
 	pflag.Bool("static", false, "link statically to create a standalone binary")
 	pflag.Bool("debug", false, "produce debug information")
+	pflag.Bool("verbose", false, "print all compiler and linker commands being executed")
 	pflag.Parse()
 
 	// Load a qb.toml file, if it exists
@@ -68,7 +69,9 @@ func main() {
 
 	// Load any compiler options
 	options := CompilerOptions{
-		Static: viper.GetBool("static"),
+		Static:  viper.GetBool("static"),
+		Debug:   viper.GetBool("debug"),
+		Verbose: viper.GetBool("verbose"),
 	}
 
 	// Find the compiler

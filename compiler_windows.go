@@ -133,6 +133,7 @@ func (ci windowsCompiler) Link(objDir, outPath string, outType LinkType, options
 	args := make([]string, 0)
 	args = append(args, "/nologo")
 	args = append(args, "/machine:x64")
+	args = append(args, "/incremental:no")
 
 	if options.Debug {
 		args = append(args, "/debug")

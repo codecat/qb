@@ -49,7 +49,7 @@ If you **do** want a little bit more control over what happens, you can either u
 
 ### Command line options
 ```
-qb [--name name] [--type (exe|dll|lib)] [--static]
+qb [--name name] [--type (exe|dll|lib)] [--static] [--debug]
 ```
 
 #### `--name`
@@ -66,6 +66,9 @@ For example, to create a dynamic library, you would pass `--type dll`.
 
 #### `--static`
 Links statically in order to create a standalone binary that does not perform any loading of dynamic libraries.
+
+#### `--debug`
+Produces debug information for the resulting binary. On Windows that means a `.pdb` file, and on Linux that means embedding debug information into the binary itself so that it can be used with gdb.
 
 ### Configuration file
 It's possible to create a `qb.toml` file (in the folder you're running `qb`) to specify your configuration options as well. This is handy if you build a lot but don't want to pass the command line options every time.

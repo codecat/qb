@@ -86,7 +86,22 @@ func (ci windowsCompiler) Compile(path, objDir string, options *CompilerOptions)
 	args := make([]string, 0)
 	args = append(args, "/nologo")
 	args = append(args, "/c")
+
+	// Set object output path
 	args = append(args, fmt.Sprintf("/Fo%s\\%s.obj", objDir, filename))
+
+	// Define the runtime flag
+	runtimeFlag := "/M"
+	if options.Static {
+		runtimeFlag += "T"
+	} else {
+		runtimeFlag += "D"
+	}
+	if options.Debug {
+		runtimeFlag += "d"
+	}
+	args = append(args, runtimeFlag)
+
 	args = append(args, path)
 
 	cmd := exec.Command(ci.compiler(), args...)
@@ -113,10 +128,8 @@ func (ci windowsCompiler) Link(objDir, outPath string, outType LinkType, options
 	args = append(args, "/nologo")
 	args = append(args, "/machine:x64")
 
-	if options.Static {
-		args = append(args, "/MT")
-	} else {
-		args = append(args, "/MD")
+	if options.Debug {
+		args = append(args, "/debug")
 	}
 
 	switch outType {

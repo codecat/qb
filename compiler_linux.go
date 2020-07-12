@@ -61,6 +61,10 @@ func (ci linuxCompiler) Link(objDir, outPath string, outType LinkType, options *
 		if options.Static {
 			args = append(args, "-static")
 		}
+
+		if options.Debug {
+			args = append(args, "-g")
+		}
 	}
 
 	filepath.Walk(objDir, func(path string, info os.FileInfo, err error) error {

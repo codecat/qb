@@ -1,6 +1,6 @@
 package main
 
-// LinkType specifies the output build type
+// LinkType specifies the output build type.
 type LinkType int
 
 const (
@@ -14,14 +14,17 @@ const (
 	LinkLib
 )
 
-// Compiler contains information about the compiler
+// Compiler contains information about the compiler.
 type Compiler interface {
 	Compile(path, objDir string, options *CompilerOptions) error
 	Link(objDir, outPath string, outType LinkType, options *CompilerOptions) (string, error)
 }
 
-// CompilerOptions contains options used for compiling and linking
+// CompilerOptions contains options used for compiling and linking.
 type CompilerOptions struct {
-	// Static sets whether to build a completely-static binary (eg. no dynamic link libraries are loaded from disk)
+	// Static sets whether to build a completely-static binary (eg. no dynamic link libraries are loaded from disk).
 	Static bool
+
+	// Debug configurations will add debug symbols. This will create a pdb file on Windows, and embed debugging information on Linux.
+	Debug bool
 }

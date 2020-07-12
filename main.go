@@ -54,6 +54,7 @@ func main() {
 	pflag.String("name", "", "binary output name without the extension")
 	pflag.String("type", "exe", "binary output type, either \"exe\", \"dll\", or \"lib\"")
 	pflag.Bool("static", false, "link statically to create a standalone binary")
+	pflag.Bool("debug", false, "produce debug information")
 	pflag.Parse()
 
 	// Load a qb.toml file, if it exists

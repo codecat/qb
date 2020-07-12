@@ -17,6 +17,7 @@ import (
 type workerTask struct {
 	path      string
 	outputDir string
+	options   *CompilerOptions
 }
 
 var compiler Compiler
@@ -35,10 +36,9 @@ func compileWorker(num int) {
 		fileForward := strings.Replace(task.path, "\\", "/", -1)
 		log.Info("%s", fileForward)
 
-		err := compiler.Compile(task.path, task.outputDir)
+		err := compiler.Compile(task.path, task.outputDir, task.options)
 		if err != nil {
-			log.Error("Failed to compile %s!", fileForward)
-			log.Error("%s", err.Error())
+			log.Error("Failed to compile %s!\n%s", fileForward, err.Error())
 			compilerErrors++
 		}
 	}
@@ -53,6 +53,7 @@ func main() {
 	// Prepare possible command line flags
 	pflag.String("name", "", "binary output name without the extension")
 	pflag.String("type", "exe", "binary output type, either \"exe\", \"dll\", or \"lib\"")
+	pflag.Bool("static", false, "link statically to create a standalone binary")
 	pflag.Parse()
 
 	// Load a qb.toml file, if it exists
@@ -62,6 +63,11 @@ func main() {
 	err := viper.ReadInConfig()
 	if err == nil {
 		log.Info("Using build configuration file %s", filepath.Base(viper.ConfigFileUsed()))
+	}
+
+	// Load any compiler options
+	options := CompilerOptions{
+		Static: viper.GetBool("static"),
 	}
 
 	// Find the compiler
@@ -119,6 +125,7 @@ func main() {
 		workerChan <- workerTask{
 			path:      file,
 			outputDir: outputDir,
+			options:   &options,
 		}
 	}
 
@@ -159,7 +166,7 @@ func main() {
 	// Begin link timer
 	timeStart = time.Now()
 
-	outPath, err := compiler.Link(pathTmp, name, linkType)
+	outPath, err := compiler.Link(pathTmp, name, linkType, &options)
 	if err != nil {
 		log.Fatal("👎 Link failed: %s", err.Error())
 		return

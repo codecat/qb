@@ -78,7 +78,7 @@ func (ci windowsCompiler) linkDirs() []string {
 	return ret
 }
 
-func (ci windowsCompiler) Compile(path, objDir string) error {
+func (ci windowsCompiler) Compile(path, objDir string, options *CompilerOptions) error {
 	// cl.exe args: https://docs.microsoft.com/en-us/cpp/build/reference/compiler-options-listed-by-category?view=vs-2019
 
 	filename := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
@@ -104,7 +104,7 @@ func (ci windowsCompiler) Compile(path, objDir string) error {
 	return nil
 }
 
-func (ci windowsCompiler) Link(objDir, outPath string, outType LinkType) (string, error) {
+func (ci windowsCompiler) Link(objDir, outPath string, outType LinkType, options *CompilerOptions) (string, error) {
 	// link.exe args: https://docs.microsoft.com/en-us/cpp/build/reference/linker-options?view=vs-2019
 
 	exeName := ci.linker()
@@ -112,6 +112,12 @@ func (ci windowsCompiler) Link(objDir, outPath string, outType LinkType) (string
 	args := make([]string, 0)
 	args = append(args, "/nologo")
 	args = append(args, "/machine:x64")
+
+	if options.Static {
+		args = append(args, "/MT")
+	} else {
+		args = append(args, "/MD")
+	}
 
 	switch outType {
 	case LinkExe:

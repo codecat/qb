@@ -16,6 +16,12 @@ const (
 
 // Compiler contains information about the compiler
 type Compiler interface {
-	Compile(path, objDir string) error
-	Link(objDir, outPath string, outType LinkType) (string, error)
+	Compile(path, objDir string, options *CompilerOptions) error
+	Link(objDir, outPath string, outType LinkType, options *CompilerOptions) (string, error)
+}
+
+// CompilerOptions contains options used for compiling and linking
+type CompilerOptions struct {
+	// Static sets whether to build a completely-static binary (eg. no dynamic link libraries are loaded from disk)
+	Static bool
 }

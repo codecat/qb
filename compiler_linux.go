@@ -13,7 +13,7 @@ import (
 type linuxCompiler struct {
 }
 
-func (ci linuxCompiler) Compile(path, objDir string) error {
+func (ci linuxCompiler) Compile(path, objDir string, options *CompilerOptions) error {
 	filename := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
 
 	args := make([]string, 0)
@@ -30,7 +30,7 @@ func (ci linuxCompiler) Compile(path, objDir string) error {
 	return nil
 }
 
-func (ci linuxCompiler) Link(objDir, outPath string, outType LinkType) (string, error) {
+func (ci linuxCompiler) Link(objDir, outPath string, outType LinkType, options *CompilerOptions) (string, error) {
 	args := make([]string, 0)
 
 	exeName := "gcc"
@@ -51,11 +51,16 @@ func (ci linuxCompiler) Link(objDir, outPath string, outType LinkType) (string, 
 		// s = write an index
 		args = append(args, "rcs")
 		args = append(args, outPath)
+
 	} else {
 		args = append(args, "-o", outPath)
 		args = append(args, "-std=c++17")
 		args = append(args, "-static-libgcc")
 		args = append(args, "-static-libstdc++")
+
+		if options.Static {
+			args = append(args, "-static")
+		}
 	}
 
 	filepath.Walk(objDir, func(path string, info os.FileInfo, err error) error {

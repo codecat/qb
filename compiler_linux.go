@@ -33,21 +33,30 @@ func (ci linuxCompiler) Compile(path, objDir string) error {
 func (ci linuxCompiler) Link(objDir, outPath string, outType LinkType) (string, error) {
 	args := make([]string, 0)
 
+	exeName := "gcc"
+
 	switch outType {
 	case LinkExe:
 	case LinkDll:
 		outPath += ".so"
 		args = append(args, "-shared")
 	case LinkLib:
+		exeName = "ar"
 		outPath += ".a"
-		args = append(args, "-static")
 	}
 
-	args = append(args, "-o", outPath)
-	args = append(args, "-std=c++17")
-	args = append(args, "-static-libgcc")
-	args = append(args, "-static-libstdc++")
-	//args = append(args, "-lm")
+	if outType == LinkLib {
+		// r = insert with replacement
+		// c = create new archie
+		// s = write an index
+		args = append(args, "rcs")
+		args = append(args, outPath)
+	} else {
+		args = append(args, "-o", outPath)
+		args = append(args, "-std=c++17")
+		args = append(args, "-static-libgcc")
+		args = append(args, "-static-libstdc++")
+	}
 
 	filepath.Walk(objDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -60,7 +69,7 @@ func (ci linuxCompiler) Link(objDir, outPath string, outType LinkType) (string, 
 		return nil
 	})
 
-	cmd := exec.Command("gcc", args...)
+	cmd := exec.Command(exeName, args...)
 
 	outputBytes, err := cmd.CombinedOutput()
 	if err != nil {

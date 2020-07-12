@@ -205,8 +205,9 @@ func main() {
 	log.Info("👏 %s", outPath)
 	log.Info("⏳ compile %v, link %v", timeCompilation, timeLinking)
 
-	// Find any non-flag commands
-	if hasCommand("run") {
+	// Run the binary if it's requested
+	if hasCommand("run") && viper.GetString("type") == "exe" {
+		// We have to use the absolute path here to make this work on Linux and MacOS
 		absOutPath, _ := filepath.Abs(outPath)
 		cmd := exec.Command(absOutPath)
 		cmd.Stdin = os.Stdin

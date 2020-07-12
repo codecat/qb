@@ -21,6 +21,9 @@ func (ci linuxCompiler) Compile(path, objDir string, options *CompilerOptions) e
 	args := make([]string, 0)
 	args = append(args, "-c")
 	args = append(args, "-o", filepath.Join(objDir, filename+".o"))
+	if options.Debug {
+		args = append(args, "-g")
+	}
 	args = append(args, path)
 
 	cmd := exec.Command("gcc", args...)
@@ -67,10 +70,6 @@ func (ci linuxCompiler) Link(objDir, outPath string, outType LinkType, options *
 
 		if options.Static {
 			args = append(args, "-static")
-		}
-
-		if options.Debug {
-			args = append(args, "-g")
 		}
 	}
 

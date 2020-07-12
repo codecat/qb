@@ -182,7 +182,7 @@ func (ci windowsCompiler) Link(objDir, outPath string, outType LinkType, options
 	return outPath, nil
 }
 
-func (ci darwinCompiler) Clean(name string) {
+func (ci windowsCompiler) Clean(name string) {
 	os.Remove(name + ".exe")
 	os.Remove(name + ".dll")
 	os.Remove(name + ".lib")

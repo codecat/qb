@@ -13,6 +13,7 @@ import (
 )
 
 type linuxCompiler struct {
+	toolset string
 }
 
 func (ci linuxCompiler) Compile(path, objDir string, options *CompilerOptions) error {
@@ -43,7 +44,7 @@ func (ci linuxCompiler) Compile(path, objDir string, options *CompilerOptions) e
 
 	args = append(args, path)
 
-	cmd := exec.Command("gcc", args...)
+	cmd := exec.Command(ci.toolset, args...)
 
 	if options.Verbose {
 		log.Trace("%s", strings.Join(cmd.Args, " "))
@@ -60,7 +61,7 @@ func (ci linuxCompiler) Compile(path, objDir string, options *CompilerOptions) e
 func (ci linuxCompiler) Link(objDir, outPath string, outType LinkType, options *CompilerOptions) (string, error) {
 	args := make([]string, 0)
 
-	exeName := "gcc"
+	exeName := ci.toolset
 
 	switch outType {
 	case LinkExe:
@@ -82,8 +83,11 @@ func (ci linuxCompiler) Link(objDir, outPath string, outType LinkType, options *
 	} else {
 		args = append(args, "-o", outPath)
 		args = append(args, "-std=c++17")
-		args = append(args, "-static-libgcc")
-		args = append(args, "-static-libstdc++")
+
+		if ci.toolset == "gcc" {
+			args = append(args, "-static-libgcc")
+			args = append(args, "-static-libstdc++")
+		}
 
 		if options.Static {
 			args = append(args, "-static")
@@ -92,16 +96,6 @@ func (ci linuxCompiler) Link(objDir, outPath string, outType LinkType, options *
 		// Add additional library paths
 		for _, dir := range options.LinkDirectories {
 			args = append(args, "-L"+dir)
-		}
-
-		// Add libraries to link
-		for _, link := range options.LinkLibraries {
-			args = append(args, "-l"+link)
-		}
-
-		// Add additional linker flags
-		for _, flag := range options.LinkerFlags {
-			args = append(args, flag)
 		}
 	}
 
@@ -115,6 +109,21 @@ func (ci linuxCompiler) Link(objDir, outPath string, outType LinkType, options *
 		args = append(args, path)
 		return nil
 	})
+
+	if outType != LinkLib {
+		// Link to some common standard libraries
+		args = append(args, "-lstdc++")
+
+		// Add libraries to link
+		for _, link := range options.LinkLibraries {
+			args = append(args, "-l"+link)
+		}
+
+		// Add additional linker flags
+		for _, flag := range options.LinkerFlags {
+			args = append(args, flag)
+		}
+	}
 
 	cmd := exec.Command(exeName, args...)
 

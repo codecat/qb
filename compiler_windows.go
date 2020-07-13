@@ -104,6 +104,21 @@ func (ci windowsCompiler) Compile(path, objDir string, options *CompilerOptions)
 	}
 	args = append(args, runtimeFlag)
 
+	// Add include directories
+	for _, dir := range options.IncludeDirectories {
+		args = append(args, "/I"+dir)
+	}
+
+	// Add precompiler definitions
+	for _, define := range options.Defines {
+		args = append(args, "/D"+define)
+	}
+
+	// Add additional compiler flags
+	for _, flag := range options.CompilerFlags {
+		args = append(args, flag)
+	}
+
 	args = append(args, path)
 
 	cmd := exec.Command(ci.compiler(), args...)
@@ -153,7 +168,27 @@ func (ci windowsCompiler) Link(objDir, outPath string, outType LinkType, options
 		args = append(args, "/lib")
 	}
 
-	args = append(args, fmt.Sprintf("/out:%s", outPath))
+	args = append(args, "/out:"+outPath)
+
+	// Add additional library paths
+	for _, dir := range options.LinkDirectories {
+		args = append(args, "/libpath:"+dir)
+	}
+
+	// Link to some common standard libraries
+	args = append(args, "kernel32.lib")
+	args = append(args, "user32.lib")
+	args = append(args, "advapi32.lib")
+
+	// Add libraries to link
+	for _, link := range options.LinkLibraries {
+		args = append(args, link)
+	}
+
+	// Add additional linker flags
+	for _, flag := range options.LinkerFlags {
+		args = append(args, flag)
+	}
 
 	filepath.Walk(objDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {

@@ -5,7 +5,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/codecat/go-libs/log"
@@ -14,16 +13,11 @@ import (
 )
 
 func hasCommand(cmd string) bool {
-	for _, arg := range os.Args {
-		if strings.HasPrefix(arg, "--") {
-			continue
-		}
-
+	for _, arg := range pflag.Args() {
 		if arg == cmd {
 			return true
 		}
 	}
-
 	return false
 }
 
@@ -37,6 +31,7 @@ func main() {
 	pflag.Bool("static", false, "link statically to create a standalone binary")
 	pflag.Bool("debug", false, "produce debug information")
 	pflag.Bool("verbose", false, "print all compiler and linker commands being executed")
+	pflag.StringSlice("pkg", nil, "packages to link for compilation")
 	pflag.Parse()
 
 	// Load a qb.toml file, if it exists
@@ -74,6 +69,16 @@ func main() {
 	ctx.CompilerOptions.Debug = viper.GetBool("debug")
 	ctx.CompilerOptions.Verbose = viper.GetBool("verbose")
 
+	// Find packages
+	packages := viper.GetStringSlice("pkg")
+	for _, pkg := range packages {
+		pkgInfo := addPackage(ctx.CompilerOptions, pkg)
+		if pkgInfo == nil {
+			log.Warn("Unable to find package %s!", pkg)
+			continue
+		}
+	}
+
 	// Find all the source files to compile
 	ctx.SourceFiles, err = getSourceFiles()
 	if err != nil {
@@ -109,7 +114,8 @@ func main() {
 
 	// Stop if linking failed
 	if err != nil {
-		log.Fatal("👎 Link failed: %s", err.Error())
+		log.Fatal("😢 Link failed!")
+		log.Fatal("%s", err.Error())
 		return
 	}
 

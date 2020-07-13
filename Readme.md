@@ -92,7 +92,8 @@ Adds a package to link to by its name. `qb` will try to resolve the package by i
    ]
    defines = [ "SFML_STATIC" ]
    ```
-2. Nothing else yet, but the following sources are planned: global configuration (like local, but system-wide), pkgconfig (for Linux and Mac), and vcpkg (for Windows).
+2. **pkgconfig**: If you have `pkg-config` installed on your system, it will be checking for packages from there.
+3. Nothing else yet, but the following is planned: global configuration (like local, but system-wide), and vcpkg (for Windows).
 
 For example, to link with SFML, we can add `--pkg sfml`, as long as `sfml` can be resolved by one of the package sources.
 

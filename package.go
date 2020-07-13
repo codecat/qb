@@ -1,8 +1,11 @@
 package main
 
 import (
+	"os/exec"
 	"runtime"
+	"strings"
 
+	"github.com/mattn/go-shellwords"
 	"github.com/spf13/viper"
 )
 
@@ -18,8 +21,10 @@ func addPackage(options *CompilerOptions, name string) *Package {
 
 	//TODO: Implement global packages
 
-	if runtime.GOOS == "linux" {
-		//TODO: Implement pkgconfig
+	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
+		if ret := addPackagePkgconfig(options, name); ret != nil {
+			return ret
+		}
 	}
 
 	if runtime.GOOS == "windows" {
@@ -36,6 +41,41 @@ func addPackageLocal(options *CompilerOptions, name string) *Package {
 	}
 
 	return configurePackageFromConfig(options, packageInfo, name)
+}
+
+func addPackagePkgconfig(options *CompilerOptions, name string) *Package {
+	// pkg-config must be installed for this to work
+	_, err := exec.LookPath("pkg-config")
+	if err != nil {
+		return nil
+	}
+
+	cmdCflags := exec.Command("pkg-config", name, "--cflags")
+	outputCflags, err := cmdCflags.CombinedOutput()
+	if err != nil {
+		return nil
+	}
+
+	cmdLibs := exec.Command("pkg-config", name, "--libs")
+	outputLibs, err := cmdLibs.CombinedOutput()
+	if err != nil {
+		return nil
+	}
+
+	parseCflags, _ := shellwords.Parse(strings.Trim(string(outputCflags), "\r\n"))
+	parseLibs, _ := shellwords.Parse(strings.Trim(string(outputLibs), "\r\n"))
+
+	for _, flag := range parseCflags {
+		options.CompilerFlags = append(options.CompilerFlags, flag)
+	}
+
+	for _, flag := range parseLibs {
+		options.LinkerFlags = append(options.LinkerFlags, flag)
+	}
+
+	return &Package{
+		Name: name,
+	}
 }
 
 func configurePackageFromConfig(options *CompilerOptions, pkg map[string]interface{}, name string) *Package {

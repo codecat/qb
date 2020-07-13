@@ -21,9 +21,26 @@ func (ci darwinCompiler) Compile(path, objDir string, options *CompilerOptions) 
 	args := make([]string, 0)
 	args = append(args, "-c")
 	args = append(args, "-o", filepath.Join(objDir, filename+".o"))
+
 	if options.Debug {
 		args = append(args, "-g")
 	}
+
+	// Add include directories
+	for _, dir := range options.IncludeDirectories {
+		args = append(args, "-I"+dir)
+	}
+
+	// Add precompiler definitions
+	for _, define := range options.Defines {
+		args = append(args, "-D"+define)
+	}
+
+	// Add additional compiler flags
+	for _, flag := range options.CompilerFlags {
+		args = append(args, flag)
+	}
+
 	args = append(args, path)
 
 	cmd := exec.Command("clang", args...)
@@ -69,6 +86,24 @@ func (ci darwinCompiler) Link(objDir, outPath string, outType LinkType, options 
 		if options.Static {
 			args = append(args, "-static")
 			log.Warn("Static linking is not supported on MacOS!")
+		}
+
+		// Add additional library paths
+		for _, dir := range options.LinkDirectories {
+			args = append(args, "-L"+dir)
+		}
+
+		// Link to some common standard libraries
+		args = append(args, "-lstdc++")
+
+		// Add libraries to link
+		for _, link := range options.LinkLibraries {
+			args = append(args, "-l"+link)
+		}
+
+		// Add additional linker flags
+		for _, flag := range options.LinkerFlags {
+			args = append(args, flag)
 		}
 	}
 

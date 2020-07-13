@@ -94,6 +94,8 @@ Adds a package to link to by its name. `qb` will try to resolve the package by i
    ```
 2. Nothing else yet, but the following sources are planned: global configuration (like local, but system-wide), pkgconfig (for Linux and Mac), and vcpkg (for Windows).
 
+For example, to link with SFML, we can add `--pkg sfml`, as long as `sfml` can be resolved by one of the package sources.
+
 #### `--static`
 Links statically in order to create a standalone binary that does not perform any loading of dynamic libraries.
 

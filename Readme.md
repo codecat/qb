@@ -58,7 +58,7 @@ If you **do** want a little bit more control over what happens, you can either u
 
 ### Command line options
 ```
-qb [--name name] [--type (exe|dll|lib)] [--static] [--debug] [--verbose]
+qb [--name name] [--type (exe|dll|lib)] [--pkg name] [--static] [--debug] [--verbose]
 ```
 
 #### `--name`
@@ -66,12 +66,33 @@ Sets the name of the project and controls the output filename. You should not pr
 
 If no name is passed, the name of the current directory will be used.
 
-For example, `--name foo` will produce a binary `foo` on Linux, and a binary `foo.exe` on Windows.
+For example, `--name foo` will produce a binary `foo` on Linux, and `foo.exe` on Windows.
 
 #### `--type`
 Sets the type of the project, which can be an executable or a (dynamic) library. This is specified using the keywords `exe`, `dll`, or `lib`.
 
 For example, to create a dynamic library, you would pass `--type dll`.
+
+#### `--pkg`
+Adds a package to link to by its name. `qb` will try to resolve the package by itself, using a variety of sources. Listed here are the sources, in the order that they will be searched for:
+
+1. **Local configuration**: If you have a `qb.toml` file, this will check for packages defined there.
+   ```
+   [package.sfml]
+   includes = [ "D:\\Libs\\SFML-2.5.1\\include\\" ]
+   linkdirs = [ "D:\\Libs\\SFML-2.5.1\\lib\\" ]
+   links = [
+     "sfml-main.lib",
+     "sfml-graphics-s.lib",
+     "sfml-system-s.lib",
+     "sfml-window-s.lib",
+     "opengl32.lib",
+     "winmm.lib",
+     "gdi32.lib",
+   ]
+   defines = [ "SFML_STATIC" ]
+   ```
+2. Nothing else yet, but the following sources are planned: global configuration (like local, but system-wide), pkgconfig (for Linux and Mac), and vcpkg (for Windows).
 
 #### `--static`
 Links statically in order to create a standalone binary that does not perform any loading of dynamic libraries.

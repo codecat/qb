@@ -104,6 +104,15 @@ func (ci windowsCompiler) Compile(path, objDir string, options *CompilerOptions)
 	}
 	args = append(args, runtimeFlag)
 
+	// Add exception handling flags
+	if options.Exceptions == ExceptionsStandard {
+		args = append(args, "/EHsc")
+	} else if options.Exceptions == ExceptionsAll {
+		args = append(args, "/EHa")
+	} else if options.Exceptions == ExceptionsMinimal {
+		args = append(args, "/EH")
+	}
+
 	// Add include directories
 	for _, dir := range options.IncludeDirectories {
 		args = append(args, "/I"+dir)

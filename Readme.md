@@ -106,6 +106,11 @@ Produces debug information for the resulting binary. On Windows that means a `.p
 #### `--verbose`
 Makes it so that all compiler and linker commands will be printed to the log. Useful for debugging `qb` itself.
 
+#### `--exceptions`
+Sets the way that the compiler's runtime will handle exceptions. Can either be `standard` (`std`), `all`, or `minimal` (`min`). The default is `standard`.
+
+This only makes a difference on Windows, where setting this to `all` will allow the runtime to catch certain access violation and other exceptions. When it's `minimal` or `min`, the minimal amount of exception handling will be done, which is similar to `all`, but there is no stack unwinding.
+
 ### Configuration file
 It's possible to create a `qb.toml` file (in the folder you're running `qb`) to specify your configuration options as well. This is handy if you build a lot but don't want to pass the command line options every time.
 

@@ -31,6 +31,7 @@ func main() {
 	pflag.Bool("static", false, "link statically to create a standalone binary")
 	pflag.Bool("debug", false, "produce debug information")
 	pflag.Bool("verbose", false, "print all compiler and linker commands being executed")
+	pflag.String("exceptions", "std", "way to handle exceptions, either \"std\", \"all\", or \"min\"")
 	pflag.StringSlice("pkg", nil, "packages to link for compilation")
 	pflag.Parse()
 
@@ -68,6 +69,19 @@ func main() {
 	ctx.CompilerOptions.Static = viper.GetBool("static")
 	ctx.CompilerOptions.Debug = viper.GetBool("debug")
 	ctx.CompilerOptions.Verbose = viper.GetBool("verbose")
+
+	// Load the exceptions method
+	exceptionsType := viper.GetString("exceptions")
+	switch exceptionsType {
+	case "", "std", "standard":
+		ctx.CompilerOptions.Exceptions = ExceptionsStandard
+	case "all":
+		ctx.CompilerOptions.Exceptions = ExceptionsAll
+	case "min", "minimal":
+		ctx.CompilerOptions.Exceptions = ExceptionsMinimal
+	default:
+		log.Warn("Unrecognized exceptions type %s", exceptionsType)
+	}
 
 	// Find packages
 	packages := viper.GetStringSlice("pkg")

@@ -31,6 +31,20 @@ type Compiler interface {
 	Clean(name string)
 }
 
+// ExceptionType is the way that a compiler's runtime might handle exceptions.
+type ExceptionType int
+
+const (
+	// ExceptionsStandard is the standard way of handling exceptions, and will perform stack unwinding.
+	ExceptionsStandard ExceptionType = iota
+
+	// ExceptionsAll is only supported on Windows, and will allow catching excptions such as access violations and integer divide by zero exceptions.
+	ExceptionsAll
+
+	// ExceptionsMinimal is only supported on Windows, and is similar to ExceptionsAll, except there is no stack unwinding.
+	ExceptionsMinimal
+)
+
 // CompilerOptions contains options used for compiling and linking.
 type CompilerOptions struct {
 	// Static sets whether to build a completely-static binary (eg. no dynamic link libraries are loaded from disk).
@@ -53,6 +67,9 @@ type CompilerOptions struct {
 	// Additional compiler and linker flags
 	CompilerFlags []string
 	LinkerFlags   []string
+
+	// Specific options
+	Exceptions ExceptionType
 }
 
 // CompilerWorkerTask describes a task for the compiler worker

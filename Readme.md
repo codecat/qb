@@ -42,6 +42,11 @@ And you run the resulting binary:
 Hello, world
 ```
 
+## Installing
+To install `qb`, you can [download a release](https://github.com/codecat/qb/releases) and make sure it exists in your `PATH`.
+
+If you have [Go](https://golang.org/) installed, you can also install the latest development version of `qb` by simply running `go get github.com/codecat/qb`.
+
 ## Commands
 You can pass a number of commands to `qb`.
 

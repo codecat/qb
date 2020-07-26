@@ -77,7 +77,7 @@ For example, to create a dynamic library, you would pass `--type dll`.
 Adds a package to link to by its name. `qb` will try to resolve the package by itself, using a variety of sources. Listed here are the sources, in the order that they will be searched for:
 
 1. **Local configuration**: If you have a `qb.toml` file, this will check for packages defined there.
-   ```
+   ```toml
    [package.sfml]
    includes = [ "D:\\Libs\\SFML-2.5.1\\include\\" ]
    linkdirs = [ "D:\\Libs\\SFML-2.5.1\\lib\\" ]

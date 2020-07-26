@@ -83,6 +83,24 @@ func main() {
 		log.Warn("Unrecognized exceptions type %s", exceptionsType)
 	}
 
+	// Load optimization options
+	optimizeType := viper.GetString("optimize")
+	switch optimizeType {
+	case "":
+		ctx.CompilerOptions.Optimization = OptimizeDefault
+	case "none":
+		ctx.CompilerOptions.Optimization = OptimizeNone
+	case "size":
+		ctx.CompilerOptions.Optimization = OptimizeSize
+	case "speed":
+		ctx.CompilerOptions.Optimization = OptimizeSpeed
+	}
+
+	// If we're on default optimization, optimize for speed if we're not a debug build
+	if ctx.CompilerOptions.Optimization == OptimizeDefault && !ctx.CompilerOptions.Debug {
+		ctx.CompilerOptions.Optimization = OptimizeSpeed
+	}
+
 	// Find packages
 	packages := viper.GetStringSlice("pkg")
 	for _, pkg := range packages {

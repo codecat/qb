@@ -45,6 +45,23 @@ const (
 	ExceptionsMinimal
 )
 
+// OptimizeType defines the compiler optimization type.
+type OptimizeType int
+
+const (
+	// OptimizeDefault favors speed for release builds, and disables optimization for debug builds.
+	OptimizeDefault OptimizeType = iota
+
+	// OptimizeNone performs no optimization at all.
+	OptimizeNone
+
+	// OptimizeSize favors size over speed in optimization.
+	OptimizeSize
+
+	// OptimizeSpeed favors sped over size in optimization.
+	OptimizeSpeed
+)
+
 // CompilerOptions contains options used for compiling and linking.
 type CompilerOptions struct {
 	// Static sets whether to build a completely-static binary (eg. no dynamic link libraries are loaded from disk).
@@ -69,7 +86,8 @@ type CompilerOptions struct {
 	LinkerFlags   []string
 
 	// Specific options
-	Exceptions ExceptionType
+	Exceptions   ExceptionType
+	Optimization OptimizeType
 }
 
 // CompilerWorkerTask describes a task for the compiler worker

@@ -26,6 +26,13 @@ func (ci darwinCompiler) Compile(path, objDir string, options *CompilerOptions) 
 		args = append(args, "-g")
 	}
 
+	// Add optimization flags
+	if options.Optimization == OptimizeSize {
+		args = append(args, "-Os")
+	} else if options.Optimization == OptimizeSpeed {
+		args = append(args, "-O3")
+	}
+
 	// Add include directories
 	for _, dir := range options.IncludeDirectories {
 		args = append(args, "-I"+dir)

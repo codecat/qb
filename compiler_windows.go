@@ -113,6 +113,13 @@ func (ci windowsCompiler) Compile(path, objDir string, options *CompilerOptions)
 		args = append(args, "/EH")
 	}
 
+	// Add optimization flags
+	if options.Optimization == OptimizeSize {
+		args = append(args, "/O1")
+	} else if options.Optimization == OptimizeSpeed {
+		args = append(args, "/O2")
+	}
+
 	// Add include directories
 	for _, dir := range options.IncludeDirectories {
 		args = append(args, "/I"+dir)

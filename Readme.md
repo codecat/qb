@@ -111,6 +111,11 @@ Sets the way that the compiler's runtime will handle exceptions. Can either be `
 
 This only makes a difference on Windows, where setting this to `all` will allow the runtime to catch certain access violation and other exceptions. When it's `minimal` or `min`, the minimal amount of exception handling will be done, which is similar to `all`, but there is no stack unwinding.
 
+#### `--optimize`
+Sets whether to use optimization. Can either be `default`, `none`, `size`, or `speed`. The default is `default`.
+
+When this option is set to `default`, whether the binary will be optimized is defined by whether it's a debug build or not. For example, when building with `qb --debug`, you will get an unoptimized binary, but by building without any options (by just running `qb`) it will produce an optimized build.
+
 ### Configuration file
 It's possible to create a `qb.toml` file (in the folder you're running `qb`) to specify your configuration options as well. This is handy if you build a lot but don't want to pass the command line options every time.
 

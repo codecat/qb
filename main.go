@@ -32,6 +32,7 @@ func main() {
 	pflag.Bool("debug", false, "produce debug information")
 	pflag.Bool("verbose", false, "print all compiler and linker commands being executed")
 	pflag.String("exceptions", "std", "way to handle exceptions, either \"std\", \"all\", or \"min\"")
+	pflag.String("optimize", "default", "enable optimizeions, either \"defualt\", \"none\", \"size\", or \"speed\"")
 	pflag.StringSlice("pkg", nil, "packages to link for compilation")
 	pflag.Parse()
 
@@ -86,7 +87,7 @@ func main() {
 	// Load optimization options
 	optimizeType := viper.GetString("optimize")
 	switch optimizeType {
-	case "":
+	case "", "default":
 		ctx.CompilerOptions.Optimization = OptimizeDefault
 	case "none":
 		ctx.CompilerOptions.Optimization = OptimizeNone

@@ -33,6 +33,7 @@ func main() {
 	pflag.Bool("verbose", false, "print all compiler and linker commands being executed")
 	pflag.String("exceptions", "std", "way to handle exceptions, either \"std\", \"all\", or \"min\"")
 	pflag.String("optimize", "default", "enable optimizeions, either \"defualt\", \"none\", \"size\", or \"speed\"")
+	pflag.StringSlice("include", nil, "directories to add to the include path")
 	pflag.StringSlice("pkg", nil, "packages to link for compilation")
 	pflag.Parse()
 
@@ -100,6 +101,23 @@ func main() {
 	// If we're on default optimization, optimize for speed if we're not a debug build
 	if ctx.CompilerOptions.Optimization == OptimizeDefault && !ctx.CompilerOptions.Debug {
 		ctx.CompilerOptions.Optimization = OptimizeSpeed
+	}
+
+	// Add custom include directories
+	includes := viper.GetStringSlice("include")
+	for _, include := range includes {
+		fi, err := os.Stat(include)
+		if err != nil {
+			log.Warn("Unable to include directory %s: %s", include, err.Error())
+			continue
+		}
+
+		if !fi.IsDir() {
+			log.Warn("Include path is not a directory: %s", include)
+			continue
+		}
+
+		ctx.CompilerOptions.IncludeDirectories = append(ctx.CompilerOptions.IncludeDirectories, include)
 	}
 
 	// Find packages

@@ -63,7 +63,14 @@ If you **do** want a little bit more control over what happens, you can either u
 
 ### Command line options
 ```
-qb [--name name] [--type (exe|dll|lib)] [--pkg name] [--static] [--debug] [--verbose]
+qb [--name name]
+   [--type (exe|dll|lib)]
+   [--pkg name]
+   [--static]
+   [--debug]
+   [--verbose]
+   [--exceptions (std|all|min)]
+   [--optimize (default|none|size|speed)]
 ```
 
 #### `--name`
@@ -120,6 +127,9 @@ This only makes a difference on Windows, where setting this to `all` will allow 
 Sets whether to use optimization. Can either be `default`, `none`, `size`, or `speed`. The default is `default`.
 
 When this option is set to `default`, whether the binary will be optimized is defined by whether it's a debug build or not. For example, when building with `qb --debug`, you will get an unoptimized binary, but by building without any options (by just running `qb`) it will produce an optimized build.
+
+#### `--include`
+Adds a directory to the include path. For example, to add the folders `foo` and `bar` to the include path, you would run `qb --include foo --include bar`.
 
 ### Configuration file
 It's possible to create a `qb.toml` file (in the folder you're running `qb`) to specify your configuration options as well. This is handy if you build a lot but don't want to pass the command line options every time.

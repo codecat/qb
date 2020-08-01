@@ -34,6 +34,7 @@ func main() {
 	pflag.String("exceptions", "std", "way to handle exceptions, either \"std\", \"all\", or \"min\"")
 	pflag.String("optimize", "default", "enable optimizeions, either \"defualt\", \"none\", \"size\", or \"speed\"")
 	pflag.StringSlice("include", nil, "directories to add to the include path")
+	pflag.StringSlice("define", nil, "adds a precompiler definition")
 	pflag.StringSlice("pkg", nil, "packages to link for compilation")
 	pflag.Parse()
 
@@ -118,6 +119,12 @@ func main() {
 		}
 
 		ctx.CompilerOptions.IncludeDirectories = append(ctx.CompilerOptions.IncludeDirectories, include)
+	}
+
+	// Add preprocessor definitions
+	defines := viper.GetStringSlice("define")
+	for _, define := range defines {
+		ctx.CompilerOptions.Defines = append(ctx.CompilerOptions.Defines, define)
 	}
 
 	// Find packages

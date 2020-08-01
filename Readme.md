@@ -64,13 +64,15 @@ If you **do** want a little bit more control over what happens, you can either u
 ### Command line options
 ```
 qb [--name name]
-   [--type (exe|dll|lib)]
+   [--type <exe|dll|lib>]
    [--pkg name]
    [--static]
    [--debug]
    [--verbose]
-   [--exceptions (std|all|min)]
-   [--optimize (default|none|size|speed)]
+   [--exceptions <std|all|min>]
+   [--optimize <default|none|size|speed>]
+   [--include <path>]
+   [--define <define>]
 ```
 
 #### `--name`
@@ -130,6 +132,9 @@ When this option is set to `default`, whether the binary will be optimized is de
 
 #### `--include`
 Adds a directory to the include path. For example, to add the folders `foo` and `bar` to the include path, you would run `qb --include foo --include bar`.
+
+#### `--define`
+Adds a precompiler definition. For example, to define `FOO` and `BAR` in the preprocessor when compiling, you would run `qb --define FOO --define BAR`.
 
 ### Configuration file
 It's possible to create a `qb.toml` file (in the folder you're running `qb`) to specify your configuration options as well. This is handy if you build a lot but don't want to pass the command line options every time.

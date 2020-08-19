@@ -22,6 +22,7 @@ func (ci linuxCompiler) Compile(path, objDir string, options *CompilerOptions) e
 	args := make([]string, 0)
 	args = append(args, "-c")
 	args = append(args, "-o", filepath.Join(objDir, filename+".o"))
+	args = append(args, "-std=c++17")
 
 	if options.Debug {
 		args = append(args, "-g")
@@ -89,7 +90,6 @@ func (ci linuxCompiler) Link(objDir, outPath string, outType LinkType, options *
 
 	} else {
 		args = append(args, "-o", outPath)
-		args = append(args, "-std=c++17")
 
 		if ci.toolset == "gcc" {
 			args = append(args, "-static-libgcc")

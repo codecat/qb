@@ -31,6 +31,7 @@ func main() {
 	pflag.Bool("static", false, "link statically to create a standalone binary")
 	pflag.Bool("debug", false, "produce debug information")
 	pflag.Bool("verbose", false, "print all compiler and linker commands being executed")
+	pflag.Bool("strict", false, "be more strict in compiler warnings")
 	pflag.String("exceptions", "std", "way to handle exceptions, either \"std\", \"all\", or \"min\"")
 	pflag.String("optimize", "default", "enable optimizations, either \"defualt\", \"none\", \"size\", or \"speed\"")
 	pflag.StringSlice("include", nil, "directories to add to the include path")
@@ -72,6 +73,7 @@ func main() {
 	ctx.CompilerOptions.Static = viper.GetBool("static")
 	ctx.CompilerOptions.Debug = viper.GetBool("debug")
 	ctx.CompilerOptions.Verbose = viper.GetBool("verbose")
+	ctx.CompilerOptions.Strict = viper.GetBool("strict")
 
 	// Load the exceptions method
 	exceptionsType := viper.GetString("exceptions")

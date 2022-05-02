@@ -69,6 +69,7 @@ qb [--name name]
    [--static]
    [--debug]
    [--verbose]
+   [--strict]
    [--exceptions <std|all|min>]
    [--optimize <default|none|size|speed>]
    [--include <path>]
@@ -119,6 +120,9 @@ Produces debug information for the resulting binary. On Windows that means a `.p
 
 #### `--verbose`
 Makes it so that all compiler and linker commands will be printed to the log. Useful for debugging `qb` itself.
+
+#### `--strict`
+Makes the compiler more strict with its warnings.
 
 #### `--exceptions`
 Sets the way that the compiler's runtime will handle exceptions. Can either be `standard` (`std`), `all`, or `minimal` (`min`). The default is `standard`.

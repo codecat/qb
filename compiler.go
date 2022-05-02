@@ -73,6 +73,9 @@ type CompilerOptions struct {
 	// Verbose compiling means we'll print the actual compiler and linker commands being executed.
 	Verbose bool
 
+	// Strict sets whether to be more strict on warnings.
+	Strict bool
+
 	// Include paths and library links
 	IncludeDirectories []string
 	LinkDirectories    []string

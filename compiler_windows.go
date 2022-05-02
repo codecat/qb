@@ -1,3 +1,4 @@
+//go:build windows
 // +build windows
 
 package main
@@ -89,6 +90,14 @@ func (ci windowsCompiler) Compile(path, objDir string, options *CompilerOptions)
 	args := make([]string, 0)
 	args = append(args, "/nologo")
 	args = append(args, "/c")
+
+	// Warnings: command line default is /W1, Visual Studio default is /W3
+	if options.Strict {
+		args = append(args, "/Wall") // Displays all warnings displayed with /W4 including warnings that are off by default
+		args = append(args, "/WX")   // Treats all warnings as errors
+	} else {
+		args = append(args, "/W3")
+	}
 
 	// Set object output path
 	args = append(args, fmt.Sprintf("/Fo%s\\%s.obj", objDir, filename))

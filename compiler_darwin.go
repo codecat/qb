@@ -23,6 +23,14 @@ func (ci darwinCompiler) Compile(path, objDir string, options *CompilerOptions) 
 	args = append(args, "-o", filepath.Join(objDir, filename+".o"))
 	args = append(args, "-std=c++17") // c++2a
 
+	// Set warnings flags
+	if options.Strict {
+		args = append(args, "-Wall")
+		args = append(args, "-Wextra")
+		args = append(args, "-Werror")
+	}
+
+	// Set debug flag
 	if options.Debug {
 		args = append(args, "-g")
 	}

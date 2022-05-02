@@ -88,8 +88,11 @@ func (ci windowsCompiler) Compile(path, objDir string, options *CompilerOptions)
 	filename := strings.TrimSuffix(filepath.Base(path), fileext)
 
 	args := make([]string, 0)
-	args = append(args, "/nologo")
-	args = append(args, "/c")
+	args = append(args, "/nologo")    // Suppress startup banner
+	args = append(args, "/c")         // Compile without linking
+	args = append(args, "/GS")        // Enables buffer security checks
+	args = append(args, "/Qspectre")  // Add instructions to mitigate Spectre variant 1 security vulnerabilities
+	args = append(args, "/Zc:inline") // Remove unreferenced function or data if it is COMDAT or has internal linkage only
 
 	// Warnings: command line default is /W1, Visual Studio default is /W3
 	if options.Strict {

@@ -206,12 +206,6 @@ func (ci windowsCompiler) Link(objDir, outPath string, outType LinkType, options
 		args = append(args, "/libpath:"+dir)
 	}
 
-	// Link to some common standard libraries
-	args = append(args, "kernel32.lib")
-	args = append(args, "user32.lib")
-	args = append(args, "shell32.lib")
-	args = append(args, "advapi32.lib")
-
 	// Add libraries to link
 	for _, link := range options.LinkLibraries {
 		args = append(args, link)
@@ -221,6 +215,12 @@ func (ci windowsCompiler) Link(objDir, outPath string, outType LinkType, options
 	for _, flag := range options.LinkerFlags {
 		args = append(args, flag)
 	}
+
+	// Link to some common standard libraries
+	args = append(args, "kernel32.lib")
+	args = append(args, "user32.lib")
+	args = append(args, "shell32.lib")
+	args = append(args, "advapi32.lib")
 
 	filepath.Walk(objDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {

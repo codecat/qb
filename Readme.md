@@ -112,6 +112,8 @@ Adds a package to link to by its name. `qb` will try to resolve the package by i
 
 For example, to link with SFML, we can add `--pkg sfml`, as long as `sfml` can be resolved by one of the package sources.
 
+Additionally, if [Conan](https://conan.io/) is installed, it may be used as a way to manage packages. If a `conanfile.txt` exists, it will run `conan install .` (unless `conanbuildfile.txt` already exists). Then `conanbuildfile.txt` is used to properly compile & link to any dependencies in the Conanfile.
+
 #### `--static`
 Links statically in order to create a standalone binary that does not perform any loading of dynamic libraries.
 

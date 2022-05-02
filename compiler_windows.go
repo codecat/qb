@@ -96,8 +96,8 @@ func (ci windowsCompiler) Compile(path, objDir string, options *CompilerOptions)
 
 	// Warnings: command line default is /W1, Visual Studio default is /W3
 	if options.Strict {
-		args = append(args, "/Wall") // Displays all warnings displayed with /W4 including warnings that are off by default
-		args = append(args, "/WX")   // Treats all warnings as errors
+		args = append(args, "/W4") // Note: Using /Wall enables warnings like C4710 when using functions like printf, so we leave it at /W4
+		args = append(args, "/WX") // Treats all warnings as errors
 	} else {
 		args = append(args, "/W3")
 	}

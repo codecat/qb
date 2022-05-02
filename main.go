@@ -151,6 +151,15 @@ func main() {
 		}
 	}
 
+	// To support Conan: run "conan install", if a conanfile exists, but conanbuildinfo.txt does not exist
+	if fileExists("conanfile.txt") && !fileExists("conanbuildinfo.txt") {
+		log.Info("Conanfile found: installing dependencies from Conan")
+		err := exec.Command("conan", "install", ".").Run()
+		if err != nil {
+			log.Warn("Conan install failed: %s", err.Error())
+		}
+	}
+
 	// To support Conan: use conanbuildinfo.txt, if it exists
 	if fileExists("conanbuildinfo.txt") {
 		conan, err := loadConanFile("conanbuildinfo.txt")

@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+
+	"github.com/codecat/go-libs/log"
 )
 
 type Conanfile map[string][]string
@@ -49,6 +51,8 @@ func addConanPackages(ctx *Context, conan Conanfile) {
 	// conan["frameworkdirs"] // contains .framework files, only needed on MacOS
 	// conan["frameworks"] // frameworks to link to
 	// conan["bindirs"] // contains .dll files, only needed when linking with shared libraries
+
+	log.Info("Adding Conan packages")
 
 	isWindows := runtime.GOOS == "windows"
 

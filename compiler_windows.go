@@ -209,6 +209,7 @@ func (ci windowsCompiler) Link(objDir, outPath string, outType LinkType, options
 	// Link to some common standard libraries
 	args = append(args, "kernel32.lib")
 	args = append(args, "user32.lib")
+	args = append(args, "shell32.lib")
 	args = append(args, "advapi32.lib")
 
 	// Add libraries to link

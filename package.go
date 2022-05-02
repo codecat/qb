@@ -66,7 +66,7 @@ func addPackagePkgconfig(options *CompilerOptions, name string) *Package {
 	parseLibs, _ := shellwords.Parse(strings.Trim(string(outputLibs), "\r\n"))
 
 	for _, flag := range parseCflags {
-		options.CompilerFlags = append(options.CompilerFlags, flag)
+		options.CompilerFlagsCXX = append(options.CompilerFlagsCXX, flag)
 	}
 
 	for _, flag := range parseLibs {
@@ -83,7 +83,7 @@ func configurePackageFromConfig(options *CompilerOptions, pkg map[string]interfa
 	maybeUnpack(&options.LinkDirectories, pkg["linkdirs"])
 	maybeUnpack(&options.LinkLibraries, pkg["links"])
 	maybeUnpack(&options.Defines, pkg["defines"])
-	maybeUnpack(&options.CompilerFlags, pkg["cflags"])
+	maybeUnpack(&options.CompilerFlagsCXX, pkg["cflags"])
 	maybeUnpack(&options.LinkerFlags, pkg["lflags"])
 
 	return &Package{

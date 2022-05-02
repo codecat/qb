@@ -5,6 +5,9 @@ type Context struct {
 	// Name is the name of the project.
 	Name string
 
+	// Final binary type we want to link.
+	Type LinkType
+
 	// SourceFiles contains paths to all the .c and .cpp files that have to be compiled.
 	SourceFiles []string
 

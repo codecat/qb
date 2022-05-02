@@ -63,6 +63,18 @@ func main() {
 		ctx.Name = filepath.Base(currentDir)
 	}
 
+	// Get the link type
+	switch viper.GetString("type") {
+	case "exe":
+		ctx.Type = LinkExe
+	case "dll":
+		ctx.Type = LinkDll
+	case "lib":
+		ctx.Type = LinkLib
+	default:
+		ctx.Type = LinkExe
+	}
+
 	// If we only have to clean, do that and exit
 	if hasCommand("clean") {
 		ctx.Compiler.Clean(ctx.Name)
@@ -136,6 +148,16 @@ func main() {
 		if pkgInfo == nil {
 			log.Warn("Unable to find package %s!", pkg)
 			continue
+		}
+	}
+
+	// To support Conan: use conanbuildinfo.txt, if it exists
+	if fileExists("conanbuildinfo.txt") {
+		conan, err := loadConanFile("conanbuildinfo.txt")
+		if err != nil {
+			log.Warn("Unable to load conanbuildinfo.txt: %s", err.Error())
+		} else {
+			addConanPackages(ctx, conan)
 		}
 	}
 

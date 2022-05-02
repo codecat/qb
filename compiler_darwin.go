@@ -52,9 +52,23 @@ func (ci darwinCompiler) Compile(path, objDir string, options *CompilerOptions) 
 		args = append(args, "-D"+define)
 	}
 
-	// Add additional compiler flags
-	for _, flag := range options.CompilerFlags {
+	// Add additional compiler flags for C/C++
+	for _, flag := range options.CompilerFlagsCXX {
 		args = append(args, flag)
+	}
+
+	// Add additional compiler flags for C++
+	if fileext != ".c" {
+		for _, flag := range options.CompilerFlagsCPP {
+			args = append(args, flag)
+		}
+	}
+
+	// Add additional compiler flags for C
+	if fileext == ".c" {
+		for _, flag := range options.CompilerFlagsC {
+			args = append(args, flag)
+		}
 	}
 
 	args = append(args, path)

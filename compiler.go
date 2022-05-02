@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/codecat/go-libs/log"
-	"github.com/spf13/viper"
 )
 
 // LinkType specifies the output build type.
@@ -85,8 +84,10 @@ type CompilerOptions struct {
 	Defines []string
 
 	// Additional compiler and linker flags
-	CompilerFlags []string
-	LinkerFlags   []string
+	CompilerFlagsCXX []string
+	CompilerFlagsCPP []string
+	CompilerFlagsC   []string
+	LinkerFlags      []string
 
 	// Specific options
 	Exceptions   ExceptionType
@@ -166,17 +167,6 @@ func performCompilation(ctx *Context) {
 }
 
 func performLinking(ctx *Context) (string, error) {
-	// Get the link type
-	linkType := LinkExe
-	switch viper.GetString("type") {
-	case "exe":
-		linkType = LinkExe
-	case "dll":
-		linkType = LinkDll
-	case "lib":
-		linkType = LinkLib
-	}
-
 	// Invoke the linker
-	return ctx.Compiler.Link(ctx.ObjectPath, ctx.Name, linkType, ctx.CompilerOptions)
+	return ctx.Compiler.Link(ctx.ObjectPath, ctx.Name, ctx.Type, ctx.CompilerOptions)
 }

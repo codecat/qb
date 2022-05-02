@@ -83,7 +83,8 @@ func (ci windowsCompiler) linkDirs() []string {
 func (ci windowsCompiler) Compile(path, objDir string, options *CompilerOptions) error {
 	// cl.exe args: https://docs.microsoft.com/en-us/cpp/build/reference/compiler-options-listed-by-category?view=vs-2019
 
-	filename := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
+	fileext := filepath.Ext(path)
+	filename := strings.TrimSuffix(filepath.Base(path), fileext)
 
 	args := make([]string, 0)
 	args = append(args, "/nologo")

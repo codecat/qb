@@ -21,6 +21,7 @@ func (ci darwinCompiler) Compile(path, objDir string, options *CompilerOptions) 
 	args := make([]string, 0)
 	args = append(args, "-c")
 	args = append(args, "-o", filepath.Join(objDir, filename+".o"))
+	args = append(args, "-std=c++17") // c++2a
 
 	if options.Debug {
 		args = append(args, "-g")
@@ -88,7 +89,6 @@ func (ci darwinCompiler) Link(objDir, outPath string, outType LinkType, options 
 
 	} else {
 		args = append(args, "-o", outPath)
-		args = append(args, "-std=c++17") // c++2a
 
 		if options.Static {
 			args = append(args, "-static")

@@ -32,7 +32,7 @@ func main() {
 	pflag.Bool("debug", false, "produce debug information")
 	pflag.Bool("verbose", false, "print all compiler and linker commands being executed")
 	pflag.String("exceptions", "std", "way to handle exceptions, either \"std\", \"all\", or \"min\"")
-	pflag.String("optimize", "default", "enable optimizeions, either \"defualt\", \"none\", \"size\", or \"speed\"")
+	pflag.String("optimize", "default", "enable optimizations, either \"defualt\", \"none\", \"size\", or \"speed\"")
 	pflag.StringSlice("include", nil, "directories to add to the include path")
 	pflag.StringSlice("define", nil, "adds a precompiler definition")
 	pflag.StringSlice("pkg", nil, "packages to link for compilation")

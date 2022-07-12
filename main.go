@@ -52,7 +52,7 @@ func main() {
 	ctx, err := NewContext()
 	if err != nil {
 		log.Fatal("Unable to initialize context: %s", err.Error())
-		return
+		os.Exit(1)
 	}
 
 	// Find the name of the project
@@ -174,12 +174,12 @@ func main() {
 	ctx.SourceFiles, err = getSourceFiles()
 	if err != nil {
 		log.Fatal("Unable to read directory: %s", err.Error())
-		return
+		os.Exit(1)
 	}
 
 	if len(ctx.SourceFiles) == 0 {
 		log.Warn("No source files found!")
-		return
+		os.Exit(1)
 	}
 
 	// Make a temporary folder for .obj files
@@ -195,7 +195,7 @@ func main() {
 	// Stop if there were any compiler errors
 	if ctx.CompilerErrors > 0 {
 		log.Fatal("😢 Compilation failed!")
-		return
+		os.Exit(1)
 	}
 
 	// Perform the linking
@@ -207,7 +207,7 @@ func main() {
 	if err != nil {
 		log.Fatal("😢 Link failed!")
 		log.Fatal("%s", err.Error())
-		return
+		os.Exit(1)
 	}
 
 	// Report succcess

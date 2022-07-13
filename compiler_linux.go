@@ -59,6 +59,7 @@ func (ci linuxCompiler) Compile(path, objDir string, options *CompilerOptions) e
 	}
 
 	// Add additional compiler flags for C++
+	fileext := filepath.Ext(path)
 	if fileext != ".c" {
 		for _, flag := range options.CompilerFlagsCPP {
 			args = append(args, flag)

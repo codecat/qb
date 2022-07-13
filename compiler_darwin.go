@@ -58,6 +58,7 @@ func (ci darwinCompiler) Compile(path, objDir string, options *CompilerOptions) 
 	}
 
 	// Add additional compiler flags for C++
+	fileext := filepath.Ext(path)
 	if fileext != ".c" {
 		for _, flag := range options.CompilerFlagsCPP {
 			args = append(args, flag)

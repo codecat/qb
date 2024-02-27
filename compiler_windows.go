@@ -145,22 +145,16 @@ func (ci windowsCompiler) Compile(path, objDir string, options *CompilerOptions)
 	}
 
 	// Add additional compiler flags for C/C++
-	for _, flag := range options.CompilerFlagsCXX {
-		args = append(args, flag)
-	}
+	args = append(args, options.CompilerFlagsCXX...)
 
 	// Add additional compiler flags for C++
 	if fileext != ".c" {
-		for _, flag := range options.CompilerFlagsCPP {
-			args = append(args, flag)
-		}
+		args = append(args, options.CompilerFlagsCPP...)
 	}
 
 	// Add additional compiler flags for C
 	if fileext == ".c" {
-		for _, flag := range options.CompilerFlagsC {
-			args = append(args, flag)
-		}
+		args = append(args, options.CompilerFlagsC...)
 	}
 
 	args = append(args, path)
@@ -220,14 +214,10 @@ func (ci windowsCompiler) Link(objDir, outPath string, outType LinkType, options
 	}
 
 	// Add libraries to link
-	for _, link := range options.LinkLibraries {
-		args = append(args, link)
-	}
+	args = append(args, options.LinkLibraries...)
 
 	// Add additional linker flags
-	for _, flag := range options.LinkerFlags {
-		args = append(args, flag)
-	}
+	args = append(args, options.LinkerFlags...)
 
 	// Link to some common standard libraries
 	args = append(args, "kernel32.lib")

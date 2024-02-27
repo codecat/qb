@@ -57,14 +57,10 @@ func addConanPackages(ctx *Context, conan Conanfile) {
 	isWindows := runtime.GOOS == "windows"
 
 	// contains .h files
-	for _, dir := range conan["includedirs"] {
-		ctx.CompilerOptions.IncludeDirectories = append(ctx.CompilerOptions.IncludeDirectories, dir)
-	}
+	ctx.CompilerOptions.IncludeDirectories = append(ctx.CompilerOptions.IncludeDirectories, conan["includedirs"]...)
 
 	// contains .lib files
-	for _, dir := range conan["libdirs"] {
-		ctx.CompilerOptions.LinkDirectories = append(ctx.CompilerOptions.LinkDirectories, dir)
-	}
+	ctx.CompilerOptions.LinkDirectories = append(ctx.CompilerOptions.LinkDirectories, conan["libdirs"]...)
 
 	// libraries to link to
 	for _, lib := range conan["libs"] {
@@ -83,35 +79,23 @@ func addConanPackages(ctx *Context, conan Conanfile) {
 	}
 
 	// precompiler defines to add
-	for _, define := range conan["defines"] {
-		ctx.CompilerOptions.Defines = append(ctx.CompilerOptions.Defines, define)
-	}
+	ctx.CompilerOptions.Defines = append(ctx.CompilerOptions.Defines, conan["defines"]...)
 
 	// C++ compiler flags to add
-	for _, flag := range conan["cppflags"] {
-		ctx.CompilerOptions.CompilerFlagsCPP = append(ctx.CompilerOptions.CompilerFlagsCPP, flag)
-	}
+	ctx.CompilerOptions.CompilerFlagsCPP = append(ctx.CompilerOptions.CompilerFlagsCPP, conan["cppflags"]...)
 
 	// C/C++ compiler flags to add
-	for _, flag := range conan["cxxflags"] {
-		ctx.CompilerOptions.CompilerFlagsCXX = append(ctx.CompilerOptions.CompilerFlagsCXX, flag)
-	}
+	ctx.CompilerOptions.CompilerFlagsCXX = append(ctx.CompilerOptions.CompilerFlagsCXX, conan["cxxflags"]...)
 
 	// C compiler flags to add
-	for _, flag := range conan["cflags"] {
-		ctx.CompilerOptions.CompilerFlagsC = append(ctx.CompilerOptions.CompilerFlagsC, flag)
-	}
+	ctx.CompilerOptions.CompilerFlagsC = append(ctx.CompilerOptions.CompilerFlagsC, conan["cflags"]...)
 
 	if ctx.Type == LinkDll {
 		// linker flags to add when building a shared library
-		for _, flag := range conan["sharedlinkflags"] {
-			ctx.CompilerOptions.LinkerFlags = append(ctx.CompilerOptions.LinkerFlags, flag)
-		}
+		ctx.CompilerOptions.LinkerFlags = append(ctx.CompilerOptions.LinkerFlags, conan["sharedlinkflags"]...)
 
 	} else if ctx.Type == LinkExe {
 		// linker flags to add when building an executable
-		for _, flag := range conan["exelinkflags"] {
-			ctx.CompilerOptions.LinkerFlags = append(ctx.CompilerOptions.LinkerFlags, flag)
-		}
+		ctx.CompilerOptions.LinkerFlags = append(ctx.CompilerOptions.LinkerFlags, conan["exelinkflags"]...)
 	}
 }

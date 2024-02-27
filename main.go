@@ -137,9 +137,7 @@ func main() {
 
 	// Add preprocessor definitions
 	defines := viper.GetStringSlice("define")
-	for _, define := range defines {
-		ctx.CompilerOptions.Defines = append(ctx.CompilerOptions.Defines, define)
-	}
+	ctx.CompilerOptions.Defines = append(ctx.CompilerOptions.Defines, defines...)
 
 	// Find packages
 	packages := viper.GetStringSlice("pkg")

@@ -27,9 +27,9 @@ func addPackage(options *CompilerOptions, name string) *Package {
 		}
 	}
 
-	if runtime.GOOS == "windows" {
-		//TODO: Implement vcpkg
-	}
+	//TODO: Implement vcpkg
+	//if runtime.GOOS == "windows" {
+	//}
 
 	return nil
 }
@@ -65,13 +65,8 @@ func addPackagePkgconfig(options *CompilerOptions, name string) *Package {
 	parseCflags, _ := shellwords.Parse(strings.Trim(string(outputCflags), "\r\n"))
 	parseLibs, _ := shellwords.Parse(strings.Trim(string(outputLibs), "\r\n"))
 
-	for _, flag := range parseCflags {
-		options.CompilerFlagsCXX = append(options.CompilerFlagsCXX, flag)
-	}
-
-	for _, flag := range parseLibs {
-		options.LinkerFlags = append(options.LinkerFlags, flag)
-	}
+	options.CompilerFlagsCXX = append(options.CompilerFlagsCXX, parseCflags...)
+	options.LinkerFlags = append(options.LinkerFlags, parseLibs...)
 
 	return &Package{
 		Name: name,

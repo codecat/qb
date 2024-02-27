@@ -111,6 +111,8 @@ func main() {
 		ctx.CompilerOptions.Optimization = OptimizeSize
 	case "speed":
 		ctx.CompilerOptions.Optimization = OptimizeSpeed
+	default:
+		log.Warn("Unrecognized optimization type %s", optimizeType)
 	}
 
 	// If we're on default optimization, optimize for speed if we're not a debug build

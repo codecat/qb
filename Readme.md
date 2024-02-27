@@ -72,6 +72,8 @@ qb [--name name]
    [--strict]
    [--exceptions <std|all|min>]
    [--optimize <default|none|size|speed>]
+   [--cppstd <latest|20|17|14>]
+   [--cstd <latest|17|11>]
    [--include <path>]
    [--define <define>]
 ```
@@ -135,6 +137,12 @@ This only makes a difference on Windows, where setting this to `all` will allow 
 Sets whether to use optimization. Can either be `default`, `none`, `size`, or `speed`. The default is `default`.
 
 When this option is set to `default`, whether the binary will be optimized is defined by whether it's a debug build or not. For example, when building with `qb --debug`, you will get an unoptimized binary, but by building without any options (by just running `qb`) it will produce an optimized build.
+
+#### `--cppstd`
+Sets which C++ standard to use. Can either be `latest`, `20`, `17`, or `14`. The default is `latest`.
+
+#### `--cstd`
+Sets which C standard to use. Can either be `latest`, `17`, or `11`. The default is `latest`.
 
 #### `--include`
 Adds a directory to the include path. For example, to add the folders `foo` and `bar` to the include path, you would run `qb --include foo --include bar`.

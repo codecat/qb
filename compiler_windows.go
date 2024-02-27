@@ -81,7 +81,7 @@ func (ci windowsCompiler) linkDirs() []string {
 }
 
 func (ci windowsCompiler) Compile(path, objDir string, options *CompilerOptions) error {
-	// cl.exe args: https://docs.microsoft.com/en-us/cpp/build/reference/compiler-options-listed-by-category?view=vs-2019
+	// cl.exe args: https://learn.microsoft.com/en-us/cpp/build/reference/compiler-options-listed-by-category?view=msvc-170
 
 	fileext := filepath.Ext(path)
 	filename := strings.TrimSuffix(filepath.Base(path), fileext)
@@ -185,7 +185,7 @@ func (ci windowsCompiler) Compile(path, objDir string, options *CompilerOptions)
 }
 
 func (ci windowsCompiler) Link(objDir, outPath string, outType LinkType, options *CompilerOptions) (string, error) {
-	// link.exe args: https://docs.microsoft.com/en-us/cpp/build/reference/linker-options?view=vs-2019
+	// link.exe args: https://learn.microsoft.com/en-us/cpp/build/reference/linker-options?view=msvc-170
 
 	exeName := ci.linker()
 

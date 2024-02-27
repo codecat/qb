@@ -134,6 +134,32 @@ func (ci windowsCompiler) Compile(path, objDir string, options *CompilerOptions)
 		args = append(args, "/O2")
 	}
 
+	// Add C++ standard flag
+	if fileext != ".c" {
+		switch options.CPPStandard {
+		case CPPStandardLatest:
+			args = append(args, "/std:c++latest")
+		case CPPStandard20:
+			args = append(args, "/std:c++20")
+		case CPPStandard17:
+			args = append(args, "/std:c++17")
+		case CPPStandard14:
+			args = append(args, "/std:c++14")
+		}
+	}
+
+	// Add C standard flag
+	if fileext == ".c" {
+		switch options.CStandard {
+		case CStandardLatest:
+			args = append(args, "/std:clatest")
+		case CStandard17:
+			args = append(args, "/std:c17")
+		case CStandard11:
+			args = append(args, "/std:c11")
+		}
+	}
+
 	// Add include directories
 	for _, dir := range options.IncludeDirectories {
 		args = append(args, "/I"+dir)

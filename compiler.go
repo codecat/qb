@@ -61,6 +61,37 @@ const (
 	OptimizeSpeed
 )
 
+// CPPStandardType defines the C++ standard to use.
+type CPPStandardType int
+
+const (
+	// CPPStandardLatest uses the latest C++ standard available to the compiler.
+	CPPStandardLatest CPPStandardType = iota
+
+	// CPPStandard20 uses the C++20 standard.
+	CPPStandard20
+
+	// CPPStandard17 uses the C++17 standard.
+	CPPStandard17
+
+	// CPPStandard14 uses the C++14 standard.
+	CPPStandard14
+)
+
+// CStandardType defines the C standard to use.
+type CStandardType int
+
+const (
+	// CStandardLatest uses the latest C standard available to the compiler.
+	CStandardLatest CStandardType = iota
+
+	// CStandard11 uses the C17 standard.
+	CStandard17
+
+	// CStandard11 uses the C11 standard.
+	CStandard11
+)
+
 // CompilerOptions contains options used for compiling and linking.
 type CompilerOptions struct {
 	// Static sets whether to build a completely-static binary (eg. no dynamic link libraries are loaded from disk).
@@ -92,6 +123,8 @@ type CompilerOptions struct {
 	// Specific options
 	Exceptions   ExceptionType
 	Optimization OptimizeType
+	CPPStandard  CPPStandardType
+	CStandard    CStandardType
 }
 
 // CompilerWorkerTask describes a task for the compiler worker

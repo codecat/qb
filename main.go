@@ -120,6 +120,34 @@ func main() {
 		ctx.CompilerOptions.Optimization = OptimizeSpeed
 	}
 
+	// Load C++ compiler standard
+	cppStandard := viper.GetString("cppstd")
+	switch cppStandard {
+	case "", "latest":
+		ctx.CompilerOptions.CPPStandard = CPPStandardLatest
+	case "20":
+		ctx.CompilerOptions.CPPStandard = CPPStandard20
+	case "17":
+		ctx.CompilerOptions.CPPStandard = CPPStandard17
+	case "14":
+		ctx.CompilerOptions.CPPStandard = CPPStandard14
+	default:
+		log.Warn("Unrecognized C++ compiler standard %s", cppStandard)
+	}
+
+	// Load C compiler standard
+	cStandard := viper.GetString("cstd")
+	switch cStandard {
+	case "", "latest":
+		ctx.CompilerOptions.CStandard = CStandardLatest
+	case "17":
+		ctx.CompilerOptions.CStandard = CStandard17
+	case "11":
+		ctx.CompilerOptions.CStandard = CStandard11
+	default:
+		log.Warn("Unrecognized C compiler standard %s", cStandard)
+	}
+
 	// Add custom include directories
 	includes := viper.GetStringSlice("include")
 	for _, include := range includes {

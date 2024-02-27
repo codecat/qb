@@ -16,7 +16,8 @@ type darwinCompiler struct {
 }
 
 func (ci darwinCompiler) Compile(path, objDir string, options *CompilerOptions) error {
-	filename := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
+	fileext := filepath.Ext(path)
+	filename := strings.TrimSuffix(filepath.Base(path), fileext)
 
 	args := make([]string, 0)
 	args = append(args, "-c")
@@ -42,6 +43,32 @@ func (ci darwinCompiler) Compile(path, objDir string, options *CompilerOptions) 
 		args = append(args, "-O3")
 	}
 
+	// Add C++ standard flag
+	if fileext != ".c" {
+		switch options.CPPStandard {
+		case CPPStandardLatest:
+			args = append(args, "-std=c++23")
+		case CPPStandard20:
+			args = append(args, "-std=c++20")
+		case CPPStandard17:
+			args = append(args, "-std=c++17")
+		case CPPStandard14:
+			args = append(args, "-std=c++14")
+		}
+	}
+
+	// Add C standard flag
+	if fileext == ".c" {
+		switch options.CStandard {
+		case CStandardLatest:
+			args = append(args, "-std=c2x")
+		case CStandard17:
+			args = append(args, "-std=c17")
+		case CStandard11:
+			args = append(args, "-std=c11")
+		}
+	}
+
 	// Add include directories
 	for _, dir := range options.IncludeDirectories {
 		args = append(args, "-I"+dir)
@@ -58,7 +85,6 @@ func (ci darwinCompiler) Compile(path, objDir string, options *CompilerOptions) 
 	}
 
 	// Add additional compiler flags for C++
-	fileext := filepath.Ext(path)
 	if fileext != ".c" {
 		for _, flag := range options.CompilerFlagsCPP {
 			args = append(args, flag)

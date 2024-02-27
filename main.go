@@ -34,6 +34,8 @@ func main() {
 	pflag.Bool("strict", false, "be more strict in compiler warnings")
 	pflag.String("exceptions", "std", "way to handle exceptions, either \"std\", \"all\", or \"min\"")
 	pflag.String("optimize", "default", "enable optimizations, either \"defualt\", \"none\", \"size\", or \"speed\"")
+	pflag.String("cppstd", "latest", "select the C++ standard to use, either \"latest\", \"20\", \"17\", or \"14\"")
+	pflag.String("cstd", "latest", "select the C standard to use, either \"latest\", \"17\", or \"11\"")
 	pflag.StringSlice("include", nil, "directories to add to the include path")
 	pflag.StringSlice("define", nil, "adds a precompiler definition")
 	pflag.StringSlice("pkg", nil, "packages to link for compilation")

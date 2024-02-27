@@ -1,6 +1,6 @@
 module github.com/codecat/qb
 
-go 1.18
+go 1.22
 
 require (
 	github.com/codecat/go-libs v0.0.0-20210906174629-ffa6674c8e05

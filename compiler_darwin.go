@@ -47,7 +47,7 @@ func (ci darwinCompiler) Compile(path, objDir string, options *CompilerOptions) 
 	if fileext != ".c" {
 		switch options.CPPStandard {
 		case CPPStandardLatest:
-			args = append(args, "-std=c++23")
+			args = append(args, "-std=c++2b")
 		case CPPStandard20:
 			args = append(args, "-std=c++20")
 		case CPPStandard17:

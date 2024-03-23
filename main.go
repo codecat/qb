@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"time"
 
 	"github.com/codecat/go-libs/log"
@@ -249,6 +250,7 @@ func main() {
 		// We have to use the absolute path here to make this work on Linux and MacOS
 		absOutPath, _ := filepath.Abs(outPath)
 		cmd := exec.Command(absOutPath)
+		cmd.Args = slices.Concat([]string{absOutPath}, pflag.Args()[1:])
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr

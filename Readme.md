@@ -43,9 +43,10 @@ Hello, world
 ```
 
 ## Installing
-To install `qb`, you can [download a release](https://github.com/codecat/qb/releases) and make sure it exists in your `PATH`.
-
-If you have [Go](https://golang.org/) installed, you can also install the latest development version of `qb` by simply running `go get github.com/codecat/qb`.
+To install `qb`, make sure you have [Go](https://go.dev) installed, then run:
+```
+go install github.com/codecat/qb@master
+```
 
 ## Commands
 You can pass a number of commands to `qb`.

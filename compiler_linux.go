@@ -81,22 +81,16 @@ func (ci linuxCompiler) Compile(path, objDir string, options *CompilerOptions) e
 	}
 
 	// Add additional compiler flags for C/C++
-	for _, flag := range options.CompilerFlagsCXX {
-		args = append(args, flag)
-	}
+	args = append(args, options.CompilerFlagsCXX...)
 
 	// Add additional compiler flags for C++
 	if fileext != ".c" {
-		for _, flag := range options.CompilerFlagsCPP {
-			args = append(args, flag)
-		}
+		args = append(args, options.CompilerFlagsCPP...)
 	}
 
 	// Add additional compiler flags for C
 	if fileext == ".c" {
-		for _, flag := range options.CompilerFlagsC {
-			args = append(args, flag)
-		}
+		args = append(args, options.CompilerFlagsC...)
 	}
 
 	args = append(args, path)
@@ -176,9 +170,7 @@ func (ci linuxCompiler) Link(objDir, outPath string, outType LinkType, options *
 		}
 
 		// Add additional linker flags
-		for _, flag := range options.LinkerFlags {
-			args = append(args, flag)
-		}
+		args = append(args, options.LinkerFlags...)
 	}
 
 	cmd := exec.Command(exeName, args...)

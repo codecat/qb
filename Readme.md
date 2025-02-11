@@ -65,6 +65,7 @@ If you **do** want a little bit more control over what happens, you can either u
 ### Command line options
 ```
 qb [--name name]
+   [--out dir]
    [--type <exe|dll|lib>]
    [--pkg name]
    [--static]
@@ -85,6 +86,9 @@ Sets the name of the project and controls the output filename. You should not pr
 If no name is passed, the name of the current directory will be used.
 
 For example, `--name foo` will produce a binary `foo` on Linux, and `foo.exe` on Windows.
+
+#### `--out`
+Sets the output directory for the linker output. If no output directory is passed, the current directory will be used.
 
 #### `--type`
 Sets the type of the project, which can be an executable or a (dynamic) library. This is specified using the keywords `exe`, `dll`, or `lib`.

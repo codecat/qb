@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"path"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -201,5 +202,5 @@ func performCompilation(ctx *Context) {
 
 func performLinking(ctx *Context) (string, error) {
 	// Invoke the linker
-	return ctx.Compiler.Link(ctx.ObjectPath, ctx.Name, ctx.Type, ctx.CompilerOptions)
+	return ctx.Compiler.Link(ctx.ObjectPath, path.Join(ctx.OutPath, ctx.Name), ctx.Type, ctx.CompilerOptions)
 }

@@ -28,6 +28,7 @@ func main() {
 
 	// Prepare possible command line flags
 	pflag.String("name", "", "binary output name without the extension")
+	pflag.String("out", "", "the output directory")
 	pflag.String("type", "exe", "binary output type, either \"exe\", \"dll\", or \"lib\"")
 	pflag.Bool("static", false, "link statically to create a standalone binary")
 	pflag.Bool("debug", false, "produce debug information")
@@ -65,6 +66,9 @@ func main() {
 		currentDir, _ := filepath.Abs(".")
 		ctx.Name = filepath.Base(currentDir)
 	}
+
+	// Get the output path
+	ctx.OutPath = viper.GetString("out")
 
 	// Get the link type
 	switch viper.GetString("type") {

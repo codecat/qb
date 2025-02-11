@@ -14,6 +14,9 @@ type Context struct {
 	// ObjectPath is the intermediate folder where object files should be stored.
 	ObjectPath string
 
+	// OutPath is the directory where the final binary is written to.
+	OutPath string
+
 	// Compiler is an abstract interface used for compiling and linking on multiple platforms.
 	Compiler               Compiler
 	CompilerErrors         int
